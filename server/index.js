@@ -4,7 +4,7 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { Server } from "socket.io";
+//import { Server } from "socket.io";
 import { dbConnection } from './config/mongo.js';
 import userRouter from "./routes/userRoutes.js";
 import tweetRouter from './routes/tweetRoutes.js';
@@ -63,7 +63,7 @@ app.use("/api/message", messageRoutes);
 app.use('/public/images', express.static('public/images'));
 
 // Socket
-const io = new Server(server, {
+/*const io = new Server(server, {
   pingTimeout: 60000,
 });
 
@@ -98,3 +98,4 @@ io.on("connection", (socket) => {
     socket.leave(userData._id);
   });
 });
+*/
