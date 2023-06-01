@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Oculta la barra de scroll en donde se aplique */
+.noscrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Expande la altura de las 3 secciones del layout */
+@media (min-width: 640px) {
+  html,body, #__next, #__next > div{
+    height: 100%;
+  }
+}
+
+/* Para utilizar estilos propios con los media queries de tailwind */
+
+@layer utilities {
+  .shadowtw{
+    box-shadow: rgba(255, 255, 255, 0.2) 0px 0px 15px, rgba(255, 255, 255, 0.15) 0px 0px 3px 1px;
+  }
+}
+
+/* Animaciones */
+
+.profileOptions{
+  display: none;
+}
+
+.entering{
+  display: flex;
+  animation: reveal .5s cubic-bezier(0.52, 0.01, 0.16, 1);
+  will-change: opacity;
+}
+
+.leaving{
+  animation: unreveal .5s cubic-bezier(0.52, 0.01, 0.16, 1);
+  will-change: opacity;
+}
+
+@keyframes unreveal {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@layer components { 
+  .icons { 
+    @apply h-10 w-10 md:h-11 md:w-11 group-hover:rounded-full px-3; 
+  }  
+} 
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+::-webkit-scrollbar:vertical {
+  display:none;
+}
