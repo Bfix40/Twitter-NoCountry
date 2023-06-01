@@ -2,7 +2,7 @@ import Session from '../models/Session.js';
 
 const sessionMiddleware = async (req, res, next) => {
   try {
-    const sessionToken = req.cookies['__Secure-next-auth.session-token']; // Se obtiene el token de sesión
+    const sessionToken = req.cookies['next-auth.session-token']; // Se obtiene el token de sesión
 
     // Si el token no se encuentra termina con error
     if (!sessionToken) {
