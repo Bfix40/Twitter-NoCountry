@@ -6,7 +6,7 @@ export const tweetsApi = createApi(
     reducerPath: "tweetsApi",
     refetchOnFocus: false, // when the window is refocused, refetch the data
     refetchOnMountOrArgChange: 120,
-    baseQuery: fetchBaseQuery({ baseUrl: "http://absorbing-record-production.up.railway.app/api/tweets/", }),
+    baseQuery: fetchBaseQuery({ baseUrl: "https://absorbing-record-production.up.railway.app/api/tweets/", }),
     tagTypes: ["Tweets"],
     endpoints: (builder) => ({
       getAllTweets: builder.query({

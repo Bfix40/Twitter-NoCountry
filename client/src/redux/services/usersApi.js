@@ -4,7 +4,7 @@ export const usersApi = createApi({
     reducerPath: "usersApi",
     refetchOnFocus: false,
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://absorbing-record-production.up.railway.app/api/users/",
+        baseUrl: "https://absorbing-record-production.up.railway.app/api/users/",
     }),
     tagTypes: ["Users"],
     endpoints: (builder) => ({
