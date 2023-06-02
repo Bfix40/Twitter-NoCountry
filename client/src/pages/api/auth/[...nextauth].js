@@ -25,17 +25,6 @@ export const authOptions = {
     }),
     // ...add more providers here
   ],
-  cookies: {
-    sessionToken: {
-    name: `__Secure-next-auth.session-token`,
-    options: {
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
-      secure: true
-     }
-    }
-  },
   callbacks: {
     async session({ session, user }) {
       session.user.name = user.name;

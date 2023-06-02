@@ -3,7 +3,7 @@ import Session from '../models/Session.js';
 const sessionMiddleware = async (req, res, next) => {
   try {
     // const sessionToken =process.env.NODE_ENV === 'production' ? req.cookies['__Secure-next-auth.session-token']:req.cookies['next-auth.session-token']; // Se obtiene el token de sesión
-    const sessionToken =req.cookies['next-auth.session-token']; // Se obtiene el token de sesión
+    const sessionToken =req.cookies['__Secure-next-auth.session-token']; // Se obtiene el token de sesión
     console.log("Abajo esta el log del ERRORR")
     console.log(req.cookies);
     // Si el token no se encuentra termina con error
