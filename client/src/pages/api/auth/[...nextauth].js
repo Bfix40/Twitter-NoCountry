@@ -53,7 +53,7 @@ export const authOptions = {
       }
     },
   },
-  useSecureCookies: true,
+  useSecureCookies: false,
   callbacks: {
     async session({ session, user }) {
       session.user.name = user.name;
