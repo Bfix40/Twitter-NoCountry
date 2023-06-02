@@ -25,6 +25,7 @@ export const authOptions = {
     }),
     // ...add more providers here
   ],
+  useSecureCookies: true,
   callbacks: {
     async session({ session, user }) {
       session.user.name = user.name;
