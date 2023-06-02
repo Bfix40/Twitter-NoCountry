@@ -29,10 +29,10 @@ export const authOptions = {
     async session({ session, user }) {
       session.user.name = user.name;
       session.user._id = user.id;
-      const data = await fetch("https://absorbing-record-production.up.railway.app/api/users/profile/" + user.id, {
+      /*const data = await fetch("https://absorbing-record-production.up.railway.app/api/users/profile/" + user.id, {
         credentials: 'same-origin'
       }).then((res) => res.json()).catch(error => error)
-      session.data = data;
+      session.data = data;*/
       return session;
     },
   },
