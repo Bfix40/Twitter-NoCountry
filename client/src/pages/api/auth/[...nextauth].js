@@ -26,6 +26,17 @@ export const authOptions = {
     // ...add more providers here
   ],
   callbacks: {
+    useSecureCookies: true,
+    cookies: {
+      callbackUrl: {
+        name: '__Secure-next-auth.callback-url',
+        options: {
+          sameSite: 'lax',
+          path: 'https://absorbing-record-production.up.railway.app/',
+          secure: true
+        }
+      }
+    },
     async session({ session, user }) {
       session.user.name = user.name;
       session.user._id = user.id;
