@@ -5,6 +5,7 @@ export const usersApi = createApi({
     refetchOnFocus: false,
     baseQuery: fetchBaseQuery({
         baseUrl: "https://absorbing-record-production.up.railway.app/api/users/",
+        credentials: "include",
     }),
     tagTypes: ["Users"],
     endpoints: (builder) => ({
