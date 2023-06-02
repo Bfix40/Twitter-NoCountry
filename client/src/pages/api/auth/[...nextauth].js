@@ -33,6 +33,7 @@ export const authOptions = {
       sameSite: 'lax',
       path: '/',
       secure: true
+     }
     }
   },
   callbacks: {
