@@ -8,7 +8,7 @@ const sessionMiddleware = async (req, res, next) => {
     console.log(req.cookies);
     // Si el token no se encuentra termina con error
     if (!sessionToken) {
-      return res.status(401).json({ error: 'No se ha iniciado sesión' });
+      return res.status(401).json({ error: 'No se ha iniciado sesión',consolelog:req.cookies });
     }
 
     const session = await Session.findOne({ sessionToken: sessionToken }); // Busca el token de sesión en la colección

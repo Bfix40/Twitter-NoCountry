@@ -25,15 +25,16 @@ export const authOptions = {
     }),
     // ...add more providers here
   ],
+  useSecureCookies: false,
   cookies: {
     sessionToken: {
       name: `next-auth.session-token`,
       options: {
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
-      secure: true
-    }
+        httpOnly: false,
+        sameSite: 'lax',
+        path: '/',
+        secure: false
+      }
     },
   },
   callbacks: {
