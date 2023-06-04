@@ -9,7 +9,7 @@ export default function login() {
   console.log(session, status);
   if (status === "loading") return <p>Loading...</p>;
 
-  if ( status !== "loading" && session) {
+  if (status !== "loading" && session) {
     router.push("/home");
     return <></>
   }

@@ -56,49 +56,5 @@ const sendMessage = asyncHandler(async (req, res) => {
     }
 });
 
-const updateMessage = async (req, res) => {
-    try {
-        const messageId = req.params.id;
-        const updatedMessage = await Message.findByIdAndUpdate(
-            messageId,
-            req.body,
-            { new: true }
-        );
 
-        if (!updatedMessage) {
-            return res.status(404).json({ message: "Mensaje no encontrado" });
-        }
-
-        return res
-            .status(200)
-            .json({
-                message: "Mensaje modificado correctamente",
-                updatedMessage,
-            });
-    } catch (error) {
-        return res
-            .status(500)
-            .json({ message: "Error al modificar el mensaje", error });
-    }
-};
-
-const deleteMessage = async (req, res) => {
-    try {
-        const messageId = req.params.id;
-        const deletedMessage = await Message.findByIdAndDelete(messageId);
-
-        if (!deletedMessage) {
-            return res.status(404).json({ message: "Mensaje no encontrado" });
-        }
-
-        return res
-            .status(200)
-            .json({ message: "Mensaje eliminado correctamente" });
-    } catch (error) {
-        return res
-            .status(500)
-            .json({ message: "Error al eliminar el mensaje", error });
-    }
-};
-
-export { sendMessage, allMessages, updateMessage, deleteMessage };
+export { sendMessage, allMessages };

@@ -13,7 +13,7 @@ import Likes from './Likes'
 import Retweet from './Retweet'
 
 const Tweet = (props) => {
-  const { id, content, timestamp = 0, media, author, comments, createdAt, __v,images} = props
+  const { id, content, timestamp = 0, author, comments, createdAt, __v, images } = props
   const formatNum = (num) => (num === 0 ? "" : num);
 
   return (
@@ -101,7 +101,7 @@ const TimeAgo = ({ timestamp, styleds = "" }) => {
   }, [time]);
 
   return (
-        <span className={styleds} >{time}</span>
+        <span className={styleds}>{` · ${time}`}</span>
   )
 }
 

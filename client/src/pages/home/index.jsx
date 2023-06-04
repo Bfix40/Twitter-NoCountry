@@ -9,7 +9,7 @@ import { useGetAllTweetsQuery } from "@/redux/services/tweetsApi";
 import SkeletonTweet from "@/components/SkeletonTweet";
 
 function Home() {
-  const { isLoading, data, error } = useGetAllTweetsQuery(undefined, {
+  const { isLoading, data } = useGetAllTweetsQuery(undefined, {
     refetchOnReconnect: true,
   });
   const [isSelected, setIsSelected] = useState("para-ti");
@@ -30,10 +30,10 @@ function Home() {
 
       <Header isSelected={isSelected} setIsSelected={setIsSelected} />
       <Post />
-      {!isLoading
+      {!isLoading && data !== undefined
         ? data
-            .filter((tweet) => tweet.author)
-            .map((tweet) => <Tweet key={tweet._id} {...tweet} />)
+          .filter((tweet) => tweet.author)
+          .map((tweet) => <Tweet key={tweet._id} {...tweet} />)
         : [1, 2, 3, 4, 5, 6, 7].map((tweet) => <SkeletonTweet key={tweet} />)}
     </>
   );

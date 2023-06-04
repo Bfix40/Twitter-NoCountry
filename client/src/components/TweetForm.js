@@ -1,15 +1,8 @@
-import { useDropzone } from "react-dropzone";
-
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-export default function TweetForm({
-  base64,
-  setBase64,
-  profileImage,
-  setText,
-}) {
+export default function TweetForm() {
   const [tweet, setTweet] = useState("");
- 
+
   const { data: session } = useSession();
 
   async function uploadTweet(e) {
@@ -30,22 +23,7 @@ export default function TweetForm({
     const responseData = await response.json();
     console.log(responseData);
   }
-  function handleDrop(files) {
-    const file = files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setBase64(e.target.result); // base64 string
-    };
-    reader.readAsDataURL(file);
-  }
-  const { getRootProps, getInputProps } = useDropzone({
-    maxFiles: 1,
-    onDrop: handleDrop,
-    accept: {
-      "image/jpeg": [],
-      "image/png": [],
-    },
-  });
+
   return (
     <form onSubmit={uploadTweet}>
       <input

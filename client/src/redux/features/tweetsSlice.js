@@ -1,16 +1,12 @@
 const { createSlice } = require("@reduxjs/toolkit");
-const { initialState } = require("@/data/tweets.js");
-
 export const tweetsSlice = createSlice({
   name: "tweets",
   initialState: {
-    tweets: initialState,
-    auxTweets: initialState
+    tweets: [],
   },
   reducers: {
     allTweets: (state, actions) => {
       state.tweets = actions.payload
-      state.auxTweets = actions.payload
     }
   }
 })

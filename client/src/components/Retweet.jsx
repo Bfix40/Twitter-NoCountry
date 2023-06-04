@@ -10,7 +10,7 @@ const Retweet = ({ retweets }) => {
   return (
         <div onClick={onClickRetweet} className={`flex items-center align-middle space-x-1 cursor-pointer group ${isRetweet ? 'text-[#00ba7c]' : 'hover:text-[#00ba7c]'}`} >
             <HiOutlineArrowsUpDown className='icons group-hover:bg-[#00ba7c]/10' title='Retweetear' />
-            <p className='text-sm' >{ retweets.length == 0 ? "" : retweets.length}</p>
+            <p className='text-sm' >{ retweets.length === 0 ? "" : retweets.length}</p>
         </div>
   )
 }
