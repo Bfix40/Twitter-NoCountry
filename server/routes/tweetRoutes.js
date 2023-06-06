@@ -12,7 +12,8 @@ import {
   getAllFollowsTweets,
   getTweetsByDate,
   getTopTweets,
-  getTopHashtags
+  getTopHashtags,
+  getLikedTweetsByUserId
 } from '../controllers/tweetController.js';
 import upload from '../middlewares/multer.js';
 import { sessionMiddleware } from '../middlewares/sessionMiddleware.js';
@@ -26,6 +27,7 @@ tweetRouter.get('/topHashtags', getTopHashtags)
 tweetRouter.get('/allFollowed', sessionMiddleware, getAllFollowsTweets)
 
 tweetRouter.get('/user/:userId', getTweetsByUserId);
+tweetRouter.get('/user/likes/:userId', getLikedTweetsByUserId)
 
 tweetRouter.post('/create', [sessionMiddleware, upload.array('images')], createTweet);
 tweetRouter.get('/:id', getTweetById);

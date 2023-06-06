@@ -6,7 +6,6 @@ import {
   BookmarksIcon,
   ChevronUpIcon,
   CreateTweetIcon,
-  EditIcon,
   ExploreIcon,
   HelpIcon,
   HomeIcon,
@@ -14,7 +13,6 @@ import {
   MenuIcon,
   MessagesIcon,
   MoreIcon,
-  NewMessageIcon,
   NotificationIcon,
   ProfileIcon,
   ReportIcon,
@@ -31,16 +29,22 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Popover, Transition } from "@headlessui/react";
 import { useSession, signOut } from "next-auth/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 import QuienSeguir from "./layoutComponents/QuienSeguir";
 import QueEstaPasando from "./layoutComponents/QueEstaPasando";
 import Login from "./layoutComponents/Login";
 import FooterUnauthenticated from "./FooterUnauthenticated";
 import { HiChevronRight } from "react-icons/hi";
+import { formatDate } from "../../utils/formateadorTiemposRelativos";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMessages } from "@/redux/features/messagesSlice";
+import io from "socket.io-client"
+import { API_URL } from "../../utils/api";
+let socket
 
 function Header() {
-  const { pathname } = useRouter();
+  const { pathname, query } = useRouter();
   const { data: session, status } = useSession();
   const [openSettings, setOpenSettings] = useState(false);
   const [openUserPopper, setOpenUserPopper] = useState();
@@ -137,10 +141,10 @@ function Header() {
             href="/messages"
             className={
               "flex w-fit items-center gap-4 rounded-3xl p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4 " +
-              (pathname === "/messages" ? "font-bold" : "")
+              (pathname.includes("messages") ? "font-bold" : "")
             }
           >
-            <MessagesIcon size={28} active={pathname === "/messages"} />{" "}
+            <MessagesIcon size={28} active={pathname.includes("messages")} />{" "}
             <p className="dark:text-white max-xl:hidden">Mensajes</p>
           </Link>
 
@@ -167,13 +171,13 @@ function Header() {
           </Link>
 
           <Link
-            href="/profile"
+            href={"/" + session?.user?.username}
             className={
               "flex w-fit items-center gap-4 rounded-3xl p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4 " +
-              (pathname === "/profile" ? "font-bold" : "")
+              (query.profile === session?.user?.username ? "font-bold" : "")
             }
           >
-            <ProfileIcon size={28} active={pathname === "/profile"} />{" "}
+            <ProfileIcon size={28} active={query.profile === session?.user?.username} />{" "}
             <p className="dark:text-white max-xl:hidden">Perfil</p>
           </Link>
 
@@ -213,7 +217,7 @@ function Header() {
                   </button>
                   <div
                     className={
-                      "w-full transition-all duration-500 " +
+                      "w-full transition-[height] duration-500 " +
                       (openSettings ? "h-[176px]" : "h-0 overflow-hidden")
                     }
                   >
@@ -223,12 +227,10 @@ function Header() {
                     >
                       <SettingsIcon size={18} /> Configuración y Privacidad
                     </Link>
-                    <button className="flex w-full items-center gap-4 p-4 py-2.5 text-left font-semibold transition duration-300 hover:bg-black/5 hover:dark:bg-white/10">
+                    <a href="https://help.twitter.com/es" target="_blank" rel="noreferrer noopener" className="flex w-full items-center gap-4 p-4 py-2.5 text-left font-semibold transition duration-300 hover:bg-black/5 hover:dark:bg-white/10">
                       <HelpIcon size={18} /> Centro de Ayuda
-                    </button>
-                    <button className="flex w-full items-center gap-4 p-4 py-2.5 text-left font-semibold transition duration-300 hover:bg-black/5 hover:dark:bg-white/10">
-                      <EditIcon size={18} /> Mostrar
-                    </button>
+                    </a>
+                    <Darkmode />
                     <button className="flex w-full items-center gap-4 p-4 py-2.5 text-left font-semibold transition duration-300 hover:bg-black/5 hover:dark:bg-white/10">
                       <ShortcutsIcon size={18} /> Atajos de teclado
                     </button>
@@ -238,7 +240,7 @@ function Header() {
 
               <Popover.Button
                 ref={setOpenOptionPopper}
-                className="flex w-fit items-center gap-4 rounded-3xl p-3 text-xl outline-none transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4"
+                className="flex w-fit items-center gap-4 rounded-3xl p-3 text-xl outline-none transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 max-xl:m-auto lg:pr-4"
               >
                 <MoreIcon size={28} />
                 <p className="dark:text-white max-xl:hidden">Más opciones</p>
@@ -247,7 +249,7 @@ function Header() {
           ) : null}
 
           {session && (
-            <button className="mt-5 w-fit rounded-full bg-[#7855FF] p-3.5 transition duration-300 hover:bg-[#6c4de6] xl:w-[85%] xl:p-3">
+            <button className="mt-5 w-fit rounded-full bg-[#1d9bf0] p-3.5 transition duration-300 hover:bg-[#1a8cd8] xl:w-[85%] xl:p-3">
               <div className="xl:hidden">
                 <CreateTweetIcon size={24} />
               </div>
@@ -282,7 +284,7 @@ function Header() {
                   onClick={() => signOut()}
                   className="w-full px-4 py-2 text-left transition duration-300 hover:bg-black/5 hover:dark:bg-white/10"
                 >
-                  Cerrar la sesion de {session?.user?.name}
+                  Cerrar la sesion de @{session?.user?.username}
                 </button>
                 <div className="-my-1 h-3 w-3 origin-bottom-left rotate-45 transform border-b border-r bg-white dark:border-white/20 dark:bg-black max-xl:ml-5 xl:mx-auto"></div>
               </Popover.Panel>
@@ -321,12 +323,12 @@ function Header() {
                     unoptimized
                   />
                 )}
-                <div className="text-base max-xl:hidden">
+                <div className="text-base text-left max-xl:hidden">
                   <p className="max-w-[14ch] truncate font-semibold dark:text-white">
                     {session?.user?.name}
                   </p>
                   <p className="-mt-0.5 max-w-[14ch] truncate text-sm text-slate-500">
-                    {session?.user?.email.split("@")[0]}
+                    @{session?.user?.username}
                   </p>
                 </div>
               </div>
@@ -384,7 +386,7 @@ function Footer() {
             (pathname === "/" ? "font-bold" : "")
           }
         >
-          <MessagesIcon size={28} active={pathname === "/messages"} />
+          <MessagesIcon size={28} active={pathname.includes("messages")} />
         </Link>
       </nav>
 
@@ -411,7 +413,7 @@ function Footer() {
               </div>
             )}
           </div>
-          <div className="flex flex-wrap gap-x-2 gap-y-1 text-[.75rem] font-medium dark:text-gray-500">
+          <div className="flex flex-wrap gap-x-2 gap-y-1 text-[.75rem] font-medium dark:text-gray-500 mb-20">
             <button className="hover:underline">Condiciones de Servicio</button>
             <button className="hover:underline">Política de Privacidad</button>
             <button className="hover:underline">Política de cookies</button>
@@ -420,9 +422,6 @@ function Footer() {
             <button className="hover:underline">Más opciones...</button>
             <p>© 2023 X Corp.</p>
           </div>
-          <div>
-            <Darkmode />
-          </div>
         </div>
       </footer>
     </>
@@ -430,20 +429,62 @@ function Footer() {
 }
 
 export default function Layout({ children }) {
-  const { status } = useSession();
-  const { pathname, asPath } = useRouter();
-  const popperRef = useRef(null);
+  const [filtered, setFiltered] = useState([])
+  const messages = useSelector(state => state.messages);
+  const dispatch = useDispatch();
+  const { data: session, status } = useSession()
+  const { pathname, asPath } = useRouter()
+  const popperRef = useRef(null)
+  const filterRef = useRef(null)
 
-  const messages = [
-    {
-      id: 1,
-      name: "elon musk",
-    },
-    {
-      id: 2,
-      name: "alex",
-    },
-  ];
+  async function handleSnooze(senderId, value, username) {
+    await fetch(`${API_URL}/api/chat/snooze?senderId=${senderId}&value=${value}&username=${username}`, {
+      method: 'PATCH',
+      credentials: "include"
+    })
+
+    dispatch(fetchMessages(session?.user?._id))
+  }
+
+  async function handlePin(senderId, value, username) {
+    await fetch(`${API_URL}/api/chat/pin?senderId=${senderId}&value=${value}&username=${username}`, {
+      method: 'PATCH',
+      credentials: "include"
+    })
+
+    dispatch(fetchMessages(session?.user?._id))
+  }
+
+  async function handleDelete(senderId, receiverId, username) {
+    await fetch(`${API_URL}/api/chat?senderId=${senderId}&receiverId=${receiverId}&username=${username}`, {
+      method: 'DELETE',
+      credentials: "include"
+    })
+
+    location.replace("/messages")
+  }
+
+  function handleFilter() {
+    const filter = messages.filter(msg =>
+      msg.name.toLowerCase().includes(filterRef.current.value.toLowerCase())
+    )
+
+    setFiltered(filter)
+  }
+
+  useEffect(() => {
+    socket = io(API_URL)
+
+    socket.emit('joinChat', session?.user?._id)
+
+    socket.on('receiveMessage', () => {
+      dispatch(fetchMessages(session?.user?._id))
+    })
+
+    if (session?.user?._id) {
+      dispatch(fetchMessages(session?.user?._id))
+    }
+  }, [session?.user?._id, dispatch])
 
   return (
     <>
@@ -466,10 +507,10 @@ export default function Layout({ children }) {
             <Link
               href="/settings/account"
               className={
-                "flex w-full items-center justify-between p-4 transition duration-200 dark:text-white max-md:hidden " +
-                (asPath === "/settings/account"
-                  ? "bg-black/5 dark:bg-white/10"
-                  : "hover:bg-black/5 hover:dark:bg-white/10")
+                "flex w-full items-center justify-between p-4 transition duration-200 dark:text-white max-md:hidden border-r " +
+                (pathname.includes("/settings/account") || pathname.includes("/settings/password") || pathname.includes("/settings/deactivate")
+                  ? "bg-black/5 dark:bg-white/10 border-r-indigo-500"
+                  : "hover:bg-black/5 hover:dark:bg-white/10 border-r-transparent")
               }
             >
               Tu cuenta <HiChevronRight size={24} />
@@ -477,10 +518,10 @@ export default function Layout({ children }) {
             <Link
               href="/settings/privacy_and_safety"
               className={
-                "flex w-full items-center justify-between p-4 transition duration-200 dark:text-white max-md:hidden " +
-                (asPath === "/settings/privacy_and_safety"
-                  ? "bg-black/5 dark:bg-white/10"
-                  : "hover:bg-black/5 hover:dark:bg-white/10")
+                "flex w-full items-center justify-between p-4 transition duration-200 dark:text-white max-md:hidden border-r " +
+                (pathname.includes("/settings/privacy_and_safety")
+                  ? "bg-black/5 dark:bg-white/10 border-r-indigo-500"
+                  : "hover:bg-black/5 hover:dark:bg-white/10 border-r-transparent")
               }
             >
               Privacidad y seguridad <HiChevronRight size={24} />
@@ -515,87 +556,92 @@ export default function Layout({ children }) {
           pathname.includes("messages") ? (
           <section
             className={
-              "flex w-full flex-col gap-4 py-4 lg:max-w-[400px] " +
+              "flex w-full flex-col gap-4 py-4 lg:max-w-[360px] " +
               (asPath === "/messages" ? "" : "max-lg:hidden")
             }
           >
             <section className="flex flex-col gap-4">
               <div className="mx-auto flex w-[90%] flex-wrap items-center justify-between gap-2">
                 <h2 className="text-2xl font-bold dark:text-white">Mensajes</h2>
-                <div className="flex flex-wrap items-center gap-3">
-                  <button>
-                    <SettingsIcon size={20} />
-                  </button>
-                  <button>
-                    <NewMessageIcon size={20} />
-                  </button>
-                </div>
               </div>
 
               <div className="group mx-auto flex w-[90%] items-center gap-3 overflow-hidden rounded-3xl border border-black/20 bg-slate-100/20 px-3 transition duration-200 focus-within:border-indigo-500 dark:border-white/20 dark:bg-slate-500/20 dark:focus-within:border-indigo-500">
-                <button>
+                <button onClick={() => handleFilter()}>
                   <SearchIcon size={24} opacity={true} />
                 </button>
                 <input
+                  ref={filterRef}
+                  onChange={() => handleFilter()}
                   type="text"
-                  className="w-full bg-transparent py-2.5 outline-none"
+                  className="w-full bg-transparent py-2.5 outline-none dark:text-white"
                   placeholder="Buscar Mensajes Directos"
                 ></input>
               </div>
             </section>
 
             <section className="flex w-full flex-col">
-              {messages.map((e) => (
+              {
+              messages?.length
+                ? (filtered?.length ? filtered : messages).map((e) => (
                 <Link
-                  href={"/messages/" + e.name}
-                  key={e.id}
-                  className="flex flex-wrap gap-4 p-3 hover:bg-black dark:hover:bg-white/10"
+                  href={"/messages/" + e.username}
+                  key={e._id}
+                  className={"flex flex-wrap gap-4 p-3 hover:bg-black/5 dark:hover:bg-white/10 max-w-full " + (asPath.includes(e.username) ? "bg-black/5 dark:bg-white/10" : "")}
                 >
                   <Image
                     className="h-14 w-14 rounded-full"
-                    src="/img/defaultprofile.jpg"
+                    src={e?.image ? e.image : "/img/defaultprofile.jpg"}
                     width={50}
                     height={50}
                     alt="Foto de perfil"
                   />
-                  <p className="font-bold dark:text-white">
-                    {e.name} <small className="text-gray-400">@alexqs96.</small>
-                  </p>
+                  <div className="flex flex-col md:max-w-[260px] w-full">
+                    <div className="flex items-center gap-1 w-full">
+                      <p className="font-bold dark:text-white truncate">
+                        {e.name}
+                      </p>
+                      <small className="text-gray-400 truncate">@{e.username}</small>
+                      <small className="text-gray-400 truncate">{formatDate(e.time)}</small>
+                      <Popover className="-mt-1 ml-auto">
+                        <Transition
+                          enter="transition duration-200 ease-out"
+                          enterFrom="transform scale-95 opacity-0"
+                          enterTo="transform scale-100 opacity-100"
+                          leave="transition duration-95 ease-out"
+                          leaveFrom="transform scale-100 opacity-100"
+                          leaveTo="transform scale-95 opacity-0"
+                        >
+                          <Popover.Panel className="dark:shadowtw absolute right-0 flex h-fit w-max flex-col overflow-hidden rounded-xl border bg-white font-medium dark:border-white/20 dark:bg-black dark:text-white">
+                            <button onClick={() => handlePin(session?.user?._id, !e?.pin, e.username)} className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
+                              <AttachMessageIcon size={20} /> Fijar conversación
+                            </button>
+                            <button onClick={() => handleSnooze(session?.user?._id, !e?.snooze, e.username)} className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
+                              <SilenceMessageIcon size={20} /> Aplazar conversación
+                            </button>
+                            <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
+                              <ReportIcon size={20} /> Denunciar la conversación
+                            </button>
+                            <button onClick={() => handleDelete(session?.user?._id, e?.chatId, e.username)} className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold text-red-600 transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
+                              <TrashIcon size={20} /> Eliminar conversación
+                            </button>
+                          </Popover.Panel>
+                        </Transition>
 
-                  <Popover className="-mt-1 ml-auto">
-                    <Transition
-                      enter="transition duration-200 ease-out"
-                      enterFrom="transform scale-95 opacity-0"
-                      enterTo="transform scale-100 opacity-100"
-                      leave="transition duration-95 ease-out"
-                      leaveFrom="transform scale-100 opacity-100"
-                      leaveTo="transform scale-95 opacity-0"
-                    >
-                      <Popover.Panel className="dark:shadowtw absolute right-0 flex h-fit w-max flex-col overflow-hidden rounded-xl border bg-white font-medium dark:border-white/20 dark:bg-black dark:text-white">
-                        <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
-                          <AttachMessageIcon size={20} /> Fijar conversación
-                        </button>
-                        <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
-                          <SilenceMessageIcon size={20} /> Aplazar conversación
-                        </button>
-                        <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
-                          <ReportIcon size={20} /> Denunciar la conversación
-                        </button>
-                        <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold text-red-600 transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
-                          <TrashIcon size={20} /> Eliminar conversación
-                        </button>
-                      </Popover.Panel>
-                    </Transition>
+                        <Popover.Button
+                          className="rounded-full p-2 outline-none transition duration-200 hover:bg-black/5 dark:hover:bg-white/10"
+                          ref={popperRef}
+                        >
+                          <MenuIcon size={18} />
+                        </Popover.Button>
+                      </Popover>
+                    </div>
+                    <p className="text-gray-400 truncate">{e.lastmessage}</p>
+                  </div>
 
-                    <Popover.Button
-                      className="rounded-full p-2 outline-none transition duration-200 hover:bg-black/5 dark:hover:bg-white/10"
-                      ref={popperRef}
-                    >
-                      <MenuIcon size={18} />
-                    </Popover.Button>
-                  </Popover>
                 </Link>
-              ))}
+                  ))
+                : null
+              }
             </section>
           </section>
           )

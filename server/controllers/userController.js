@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { isValidObjectId } from 'mongoose';
 import Comment from "../models/Comment.js";
 import Session from "../models/Session.js";
 import Tweet from "../models/Tweet.js";
@@ -11,7 +11,28 @@ const getProfileById = async (req, res) => {
     if (!id) {
       res.status(400).json({ error: 'No se pudo encontrar el usuario.' })
     }
-    const profile = await User.findById(id).populate('likes tweets comments followers following');
+
+    let profile
+
+    if (isValidObjectId(id)) {
+      profile = await User.findById(id).populate('likes tweets comments followers following');
+      const tweets = await Tweet.find({author : id });
+      profile.tweets = tweets;
+      const comments = await Comment.find({author: id})
+      profile.comments = comments;
+      const likes = await Tweet.find({likes : id});
+      profile.likes = likes;
+    } else {
+      profile = await User.findOne({ username: id }).populate('likes tweets comments followers following');
+      const tweets = await Tweet.find({author : profile.id });
+      profile.tweets = tweets;
+      const comments = await Comment.find({author: profile.id})
+      profile.comments = comments;
+      const likes = await Tweet.find({likes : profile.id});
+      profile.likes = likes;
+    }
+
+
     res.status(200).json(profile);
   } catch (error) {
     console.error(error);
@@ -37,6 +58,16 @@ const getMyProfile = async (req, res) => {
   try {
     const { id } = req.user;
     const profile = await User.findById(id).populate('likes tweets comments followers following');
+    if (profile.username === undefined) {
+      profile.username = profile.email.split("@")[0];
+      await profile.save();
+    }
+    const tweets = await Tweet.find({author : id });
+    profile.tweets = tweets;
+    const comments = await Comment.find({author: id})
+    profile.comments = comments;
+    const likes = await Tweet.find({likes : id});
+    profile.likes = likes;
     res.status(200).json(profile);
   } catch (error) {
     console.error(error);
@@ -47,9 +78,9 @@ const getMyProfile = async (req, res) => {
 const updateMyProfile = async (req, res) => {
   try {
     const { id } = req.user;
-    const { bio, username, name, confirmed } = req.body;
+    const { bio, username, name, confirmed, birthday, genre, languages, website, location } = req.body;
     const updatedProfile = await User.findByIdAndUpdate(id, {
-      bio, username, name, confirmed
+      bio, username, name, confirmed, birthday, genre, languages, website, location
     }, { new: true });
     res.status(200).json(updatedProfile);
   } catch (error) {

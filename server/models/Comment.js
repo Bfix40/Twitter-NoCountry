@@ -11,16 +11,12 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    date: {
-        type: Date,
-        default: Date.now()
-    },
     likes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Like'
     }]
-
-})
+},  { timestamps: true }
+)
 
 const Comment = mongoose.model('Comment', commentSchema);
 

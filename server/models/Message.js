@@ -2,10 +2,12 @@ import mongoose from "mongoose";
 
 const messageSchema = mongoose.Schema(
     {
-        sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        content: { type: String, trim: true },
-        chat: { type: mongoose.Schema.Types.ObjectId, ref: "Chat" },
-        readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        chatId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        senderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        receiverId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        message: String,
+        createdAt: { type: Date, default: Date.now }
     },
     { timestamps: true }
 );

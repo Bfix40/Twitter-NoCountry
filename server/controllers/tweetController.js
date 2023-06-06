@@ -57,7 +57,7 @@ const getAllTweets = async (_req, res) => {
     const tweets = await Tweet.find().populate(
       'author',
       'name image username email confirmed'
-    ).populate('likes retweets', 'name image username email');
+    ).populate('likes retweets comments', 'name image username email');
 
     const retweets = await Retweet.find().populate({
       path: 'author',
@@ -65,7 +65,7 @@ const getAllTweets = async (_req, res) => {
     }).populate({
       path: 'originalTweet',
       populate: {
-        path: 'author likes retweets',
+        path: 'author likes retweets comments',
         select: 'name image username email confirmed'
       }
     });
@@ -93,6 +93,19 @@ const getTweetById = async (req, res) => {
   }
 };
 
+const getLikedTweetsByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const likes = await Tweet.find({likes : userId}).populate(
+      'author',
+      'name image username email confirmed'
+    ).populate('likes', 'name image username email');
+    res.status(200).send(likes);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Error getting tweet' });
+  }
+}
 
 //traer tweets por usuario
 const getTweetsByUserId = async (req, res) => {
@@ -107,6 +120,8 @@ const getTweetsByUserId = async (req, res) => {
       .json({ message: 'Error al obtener los tweets del usuario' });
   }
 };
+
+
 
 //editar tweet
 const updateTweet = async (req, res) => {
@@ -337,5 +352,6 @@ export {
   getAllFollowsTweets,
   getTweetsByDate,
   getTopTweets,
-  getTopHashtags
+  getTopHashtags,
+  getLikedTweetsByUserId
 };

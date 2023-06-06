@@ -1,3 +1,5 @@
+import { BiCircleHalf } from "react-icons/bi";
+
 function Darkmode () {
   function swapTheme () {
     const currentTheme = localStorage.getItem('theme') || 'light';
@@ -11,10 +13,10 @@ function Darkmode () {
 
   return (
     <button
-      className="p-2 bg-black text-white dark:bg-white dark:text-black w-fit font-medium text-sm"
+      className="flex w-full items-center gap-4 p-4 py-2.5 text-left font-semibold transition duration-300 hover:bg-black/5 hover:dark:bg-white/10"
       onClick={swapTheme}
     >
-      Cambiar Tema
+      <BiCircleHalf size={18} className="border rounded-full border-black dark:border-white" /> Cambiar Tema
     </button>
   );
 }

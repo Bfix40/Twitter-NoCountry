@@ -11,7 +11,7 @@ const Settings = () => {
     <Head>
       <title>Tu cuenta / Twitter</title>
     </Head>
-    <section className={'text-white md:border-x border-x-black/5 dark:border-x-white/20 py-4 h-full w-full md:max-w-[500px] '}>
+    <section className={'dark:text-white md:border-x border-x-black/5 dark:border-x-white/20 py-4 h-full w-full md:max-w-[500px] '}>
       <h2 className='flex items-center gap-4 dark:text-white font-bold ml-4 text-xl'><Link href="/settings" className='md:hidden'><HiChevronLeft size={24} /></Link> Tu cuenta</h2>
       <small className='my-4 ml-4 text-gray-400 block'>Ve la información de la cuenta u obtén más información acerca de las opciones de desactivación de la cuenta</small>
       <Link href="/settings/account/your_twitter_data" className='dark:text-white p-4 h-24 hover:bg-black/5 hover:dark:bg-white/10 w-full flex gap-5 items-center transition duration-200'>

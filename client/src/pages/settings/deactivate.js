@@ -17,7 +17,7 @@ const DisableTwitter = () => {
     <Head>
       <title>Desactivar la cuenta / Twitter</title>
     </Head>
-    <section className='text-white md:border-x border-x-black/5 dark:border-x-white/20 py-4 h-full w-full'>
+    <section className='dark:text-white md:border-x border-x-black/5 dark:border-x-white/20 py-4 h-full w-full'>
       <h2 className='flex items-center gap-4 dark:text-white font-bold ml-4 mb-4 text-xl'><Link href="/settings/account"><HiChevronLeft size={24} /></Link> Desactivar la cuenta</h2>
 
       <Link href="/perfil" className='flex gap-2 w-full pl-6 py-3 hover:bg-black/5 hover:dark:bg-white/10'>

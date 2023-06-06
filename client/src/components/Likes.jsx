@@ -3,7 +3,7 @@ import { useLikeTweetMutation } from '@/redux/services/tweetsApi'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import { useSession } from "next-auth/react";
 
-const Likes = ({ _id, likes }) => {
+const Likes = ({ _id, likes = [] }) => {
   const { data: session } = useSession();
   const loggedInUserId = session?.user?._id;
   const [isLiked, setIsLiked] = useState(likes.find(like => like._id === loggedInUserId));
@@ -15,8 +15,10 @@ const Likes = ({ _id, likes }) => {
   }, [loggedInUserId, likes])
 
   const onClickLike = () => {
-    likeTweet({ tweetId: _id, token: session.token })
-    setIsLiked(!isLiked)
+    if (session) {
+      likeTweet({ tweetId: _id, token: session.token })
+      setIsLiked(!isLiked)
+    }
   }
 
   return (

@@ -7,17 +7,15 @@ import { BsEmojiSmile } from "react-icons/bs";
 import { BiCalendar, BiMap } from "react-icons/bi";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
-// import { createTweet } from "../../lib/tweets";
-import { useCreateTweetMutation } from "@/redux/services/tweetsApi";
+import { useCreateCommentTweetMutation } from "@/redux/services/tweetsApi";
 import { useSession } from "next-auth/react";
-// import { useRouter } from "next/router";
 
-const Post = () => {
+const Comment = ({ tweetId, closeModal }) => {
   const { data: session, status } = useSession();
   const [tweetText, setTweetText] = useState("");
   const [ubicacion, setUbicacion] = useState("");
   const [files, setFiles] = useState([]);
-  const [createTweet] = useCreateTweetMutation();
+  const [createCommentTweet, { isLoading, isError }] = useCreateCommentTweetMutation();
 
   const handleTweetChange = (event) => {
     setTweetText(event.target.value);
@@ -25,23 +23,26 @@ const Post = () => {
 
   const handleTweetSubmit = async (event) => {
     event.preventDefault();
-    const body = new FormData();
-    if (files.length !== 0) {
-      body.append("images", files[0].file);
-    }
 
-    if (tweetText.length !== 0 || files.length !== 0) {
-      body.append("content", tweetText);
-      body.append("hashtags", ["Tweet"]);
-      createTweet({ body, token: session.token });
+    if (tweetText.length !== 0) {
+    const body = {
+        content: tweetText,
+        tweetId,
+        hashtags: ["Tweet"]
+    }
+      await createCommentTweet({ body, token: session.token });
       setTweetText("");
       setFiles([]);
       setUbicacion("");
+      if (!isLoading && !isError) {
+        closeModal()
+    }
+    if (isError) alert(isError)
     }
   };
   return (
-    <div className="h-auto w-full border-b border-black/5 dark:border-white/20 dark:bg-black dark:text-[#e7e9ea]">
-      <div className="p-4">
+    <div className="h-auto w-full  dark:bg-black bg-white dark:text-[#e7e9ea]">
+      <div className="">
         <div className="flex w-full items-start">
           <div className="flex-shrink-0">
             {!session?.user?.image || status === "loading" ? (
@@ -70,8 +71,8 @@ const Post = () => {
           </div>
           <div className="ml-3 w-full flex-row ">
             <textarea
-              className="my-2 w-full resize-none bg-transparent text-xl focus:outline-none dark:text-white"
-              placeholder="¿Qué está pasando?"
+              className="my-2 w-full resize-none bg-transparent text-xl focus:outline-none text-black dark:text-white"
+              placeholder="¡Twittea tu respuesta!"
               value={tweetText}
               onChange={handleTweetChange}
             />
@@ -108,7 +109,7 @@ const Post = () => {
               ))}
             </div>
 
-            <div className="my-2 w-full justify-end border-b border-black/5 py-2 dark:border-white/20">
+            <div className="my-2 w-full justify-end py-2 ">
               {ubicacion.length ? (
                 <span
                   onClick={() => setUbicacion("")}
@@ -122,7 +123,10 @@ const Post = () => {
                 ""
               )}
             </div>
-            <div className="flex w-full flex-row justify-between ">
+          </div>
+        </div>
+      </div>
+      <div className="flex w-full flex-row justify-between ">
               <div className="flex w-full items-center gap-1">
                 <FileUploader files={files} setFiles={setFiles} />
                 <div className="group flex cursor-pointer items-center space-x-1 align-middle text-[#1C9BEF]">
@@ -157,26 +161,23 @@ const Post = () => {
                 disabled={!tweetText.length && !files.length}
                 onClick={handleTweetSubmit}
               >
-                Twittear
+                Responder
               </button>
             </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
 
 const FileUploader = ({ files, setFiles }) => {
   const onDrop = (acceptedFiles) => {
-    // Limit the number of files to 2
-    if (files.length === 2) {
-      return alert("Solo se puede un max 2 fotos y videos");
+    // Limit the number of files to 1
+    if (files.length === 1) {
+      return alert("Solo se puede un max 1 fotos");
     }
 
     const updatedFiles = [
       ...files,
-      ...acceptedFiles.slice(0, 2 - files.length).map((element) => ({
+      ...acceptedFiles.slice(0, 1 - files.length).map((element) => ({
         file: element,
         id: Math.floor(Date.now() + (Math.random() * 100 + 1)),
       })),
@@ -204,7 +205,7 @@ const Ubicacion = ({ setUbicacion }) => {
   const geolocationAPI = navigator.geolocation;
   const getUserCoordinates = async () => {
     if (!geolocationAPI) {
-      console.log("Geolocation API is not available in your browser!");
+      alert("Geolocation API is not available in your browser!");
     } else {
       geolocationAPI.getCurrentPosition(
         (position) => {
@@ -218,7 +219,7 @@ const Ubicacion = ({ setUbicacion }) => {
             );
         },
         (error) => {
-          console.log(error.message);
+          alert(error.message);
         }
       );
     }
@@ -237,4 +238,4 @@ const Ubicacion = ({ setUbicacion }) => {
   );
 };
 
-export default Post;
+export default Comment;

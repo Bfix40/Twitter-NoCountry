@@ -1,21 +1,17 @@
 import {Router} from "express";
 import {
-    accessChat,
+    deleteChat,
     fetchChats,
-    createGroupChat,
-    removeFromGroup,
-    addToGroup,
-    renameGroup,
+    pinChat,
+    snoozeChat,
 } from "../controllers/chatController.js";
 //!const { protect } = require("../middleware/authMiddleware");
 import { sessionMiddleware } from '../middlewares/sessionMiddleware.js';
 const messageRoutes = Router()
 
-messageRoutes.route("/").post(sessionMiddleware, accessChat);
 messageRoutes.route("/").get(sessionMiddleware, fetchChats);
-messageRoutes.route("/group").post(sessionMiddleware, createGroupChat);
-messageRoutes.route("/rename").put(sessionMiddleware, renameGroup);
-messageRoutes.route("/groupremove").put(sessionMiddleware, removeFromGroup);
-messageRoutes.route("/groupadd").put(sessionMiddleware, addToGroup);
+messageRoutes.route("/snooze").patch(sessionMiddleware, snoozeChat);
+messageRoutes.route("/pin").patch(sessionMiddleware, pinChat);
+messageRoutes.route("/").delete(sessionMiddleware, deleteChat);
 
 export default messageRoutes

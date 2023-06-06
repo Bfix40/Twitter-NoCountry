@@ -1,5 +1,5 @@
 const TIME_UNITS = [
-  { unit: 'día', seconds: 86400 },
+  { unit: ' día', seconds: 86400 },
   { unit: 'h', seconds: 3600 },
   { unit: 'min', seconds: 60 },
   { unit: 's', seconds: 1 }
@@ -15,7 +15,7 @@ export const getTimeAgo = (timestamp) => {
     const secondsElapsed = Math.floor(timeDiff / 1000);
 
     if (secondsElapsed === 0) {
-      return '1s'
+      return '0s'
     }
 
     for (const { unit, seconds } of TIME_UNITS) {
@@ -28,3 +28,8 @@ export const getTimeAgo = (timestamp) => {
     return date.toLocaleString('es-ES', { day: 'numeric', month: 'short' }) + ".";
   }
 };
+
+export function formatDate(dateString) {
+  const date = new Date(dateString)
+  return date.toLocaleDateString("es-ES", { day: 'numeric', month: 'short', year: 'numeric' })
+}

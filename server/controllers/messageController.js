@@ -1,60 +1,47 @@
 import asyncHandler from "express-async-handler";
 import Message from "../models/Message.js";
-import User from "../models/User.js";
-import Chat from "../models/Chat.js";
 
 //@description     Get all Messages
-//@route           GET /api/Message/:chatId
+//@route           GET /api/messages/
 //@access          Protected
-const allMessages = asyncHandler(async (req, res) => {
-    try {
-        const messages = await Message.find({ chat: req.params.chatId })
-            .populate("sender", "name pic email")
-            .populate("chat");
-        res.json(messages);
-    } catch (error) {
-        res.status(400);
-        throw new Error(error.message);
-    }
-});
+const allMessages = async (req, res) => {
+  const { senderId, receiverId } = req.query;
 
-//@description     Create New Message
-//@route           POST /api/Message/
+  try {
+    const messages = await Message.find({
+      userId: senderId,
+      chatId: receiverId,
+    }).sort({ createdAt: 1 });
+
+    if (!messages) {
+      res.status(400).json([]);
+    }
+
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error("Error al obtener los mensajes:", error);
+    res.status(500).json({ error: "Error al obtener los mensajes" });
+  }
+};
+
+//@description     Delete a single message
+//@route           DELETE /api/message/
 //@access          Protected
-const sendMessage = asyncHandler(async (req, res) => {
-    const { content, chatId } = req.body;
+const deleteMessage = async (req, res) => {
+  try {
+    const messageId = req.params.id;
+    const deletedMessage = await Message.findByIdAndDelete(messageId);
 
-    if (!content || !chatId) {
-        console.log("Invalid data passed into request");
-        return res.sendStatus(400);
+    if (!deletedMessage) {
+      return res.status(404).json({ message: "Mensaje no encontrado" });
     }
 
-    let newMessage = {
-        sender: req.user._id,
-        content: content,
-        chat: chatId,
-    };
+    return res.status(200).json({ message: "Mensaje eliminado correctamente" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error al eliminar el mensaje", error });
+  }
+};
 
-    try {
-        let message = await Message.create(newMessage);
-
-        message = await message.populate("sender", "name pic").execPopulate();
-        message = await message.populate("chat").execPopulate();
-        message = await User.populate(message, {
-            path: "chat.users",
-            select: "name pic email",
-        });
-
-        await Chat.findByIdAndUpdate(req.body.chatId, {
-            latestMessage: message,
-        });
-
-        res.json(message);
-    } catch (error) {
-        res.status(400);
-        throw new Error(error.message);
-    }
-});
-
-
-export { sendMessage, allMessages };
+export { allMessages, deleteMessage };

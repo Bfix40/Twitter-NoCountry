@@ -13,7 +13,7 @@ const TwitterPassword = () => {
     <Head>
       <title>Cambia tu contraseña / Twitter</title>
     </Head>
-    <section className='text-white md:border-x border-x-black/5 dark:border-x-white/20 py-4 h-full w-full'>
+    <section className='dark:text-white md:border-x border-x-black/5 dark:border-x-white/20 py-4 h-full w-full'>
       <h2 className='flex items-center gap-4 dark:text-white font-bold ml-4 mb-4 text-xl'><Link href="/settings/account"><HiChevronLeft size={24} /></Link> Cambia tu contraseña</h2>
 
       <div className='mt-4 mb-1 relative pt-3 group focus-within:outline border border-black/5 dark:border-white/20 rounded-sm w-[95%] mx-auto'>
@@ -33,7 +33,7 @@ const TwitterPassword = () => {
       </div>
       <hr className='border-black/5 dark:border-white/20'></hr>
       <hr className='border-black/5 dark:border-white/20 mt-2.5'></hr>
-      <button className='bg-indigo-600 py-2 px-4 rounded-2xl my-2 ml-auto block mr-4'>Guardar</button>
+      <button className='bg-indigo-600 py-2 px-4 rounded-2xl my-2 ml-auto block mr-4 text-white'>Guardar</button>
     </section>
     </>
   )
