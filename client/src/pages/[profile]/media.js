@@ -9,7 +9,7 @@ const ProfileMedia = () => {
   const { data: session, loading } = useSession()
   let profile = {}
   const { query } = useRouter()
-  const { data } = useGetUserByIdQuery(query.profile)
+  const { data } = useGetUserByIdQuery({ userId: query?.profile, token: session?.token })
 
   if (loading) {
     <p className="dark:text-white">Cargando</p>

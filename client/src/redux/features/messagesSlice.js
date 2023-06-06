@@ -1,13 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { API_URL } from "../../../utils/api";
+import { useSession } from "next-auth/react";
 
 export const fetchMessages = createAsyncThunk(
   "messages/fetchMessages",
-  async (userId) => {
+  async (prop) => {
     const response = await fetch(
-      `${API_URL}/api/chat?userId=${userId}`,
+      `${API_URL}/api/chat?userId=${prop.userId}`,
       {
-        credentials: "include",
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Bearer ${prop.token}`,
+        },
       }
     );
     const data = await response.json();

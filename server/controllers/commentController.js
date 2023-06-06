@@ -96,7 +96,7 @@ const getCommentByUserId = async (req, res) => {
 
 const likeComment = async(req,res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.user;
     const commentId = req.params.id;
 
     const comment = await Comment.findById(commentId);
@@ -122,7 +122,7 @@ const likeComment = async(req,res) => {
 
 const unLikeComment = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.user;
     const commentId = req.params.id;
 
     const comment = await Comment.findById(commentId);

@@ -35,8 +35,7 @@ function Home() {
       <Post />
       {!isLoading && data !== undefined
         ? data
-          .filter((tweet) => tweet.author)
-          .map((tweet) => tweet.isRetweet && tweet.originalTweet != null ? <Retweet key={tweet._id} {...tweet} /> : <Tweet key={tweet._id} {...tweet} />)
+          .map((tweet) => tweet.isRetweet ? <Retweet key={tweet._id} {...tweet} /> : <Tweet key={tweet._id} {...tweet} />)
         : [1, 2, 3, 4, 5, 6, 7].map((tweet) => <SkeletonTweet key={tweet} />)}
         {appContext.active ? <Modal /> : null}
     </>

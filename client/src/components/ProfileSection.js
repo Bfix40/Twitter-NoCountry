@@ -33,14 +33,14 @@ const ProfileSection = ({ session, profile }) => {
   );
 
   const onClickFollowUser = async (id) => {
-    const res = await followUser(id, session?.user._id);
+    const res = await followUser({ userId: id, token: session.token });
     if (res.data) {
       setFollow(true)
     }
   };
 
   const onClickUnFollowUser = async (id) => {
-    const res = await unfollowUser(id, session?.user._id);
+    const res = await unfollowUser({ userId: id, token: session.token });
     if (res.data) {
       setFollow(false)
     }

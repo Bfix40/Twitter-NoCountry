@@ -29,7 +29,7 @@ export const getTimeAgo = (timestamp) => {
   }
 };
 
-export function formatDate(dateString) {
+export function formatDate(dateString, short) {
   const date = new Date(dateString)
-  return date.toLocaleDateString("es-ES", { day: 'numeric', month: 'short', year: 'numeric' })
+  return short ? date.toLocaleDateString("es-ES", { day: 'numeric', month: 'long' }) : date.toLocaleDateString("es-ES", { day: 'numeric', month: 'long', year: 'numeric' })
 }

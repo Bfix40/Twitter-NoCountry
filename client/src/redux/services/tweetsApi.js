@@ -41,12 +41,15 @@ export const tweetsApi = createApi(
       }),
       getTweetsByUserId: builder.query({
         query: ({ userId }) => `user/${userId}`,
+        providesTags: ["TweetById"],
       }),
       getTweetById: builder.query({
         query: (id) => `tweets/${id}`,
+        providesTags: ["TweetById"],
       }),
       getCommentById: builder.query({
         query: (id) => `comments/${id}`,
+        providesTags: ["TweetById"],
       }),
       // confirmToken: builder.query({
       //   query: ({ token}) => `confirm/${token}`,
@@ -74,7 +77,7 @@ export const tweetsApi = createApi(
             Authorization: `Bearer ${token}`,
           },
         }),
-        invalidatesTags: ["Tweets"],
+        invalidatesTags: ["Tweets", "TweetById"],
       }),
       createCommentTweet: builder.mutation({
         query: ({ body, token }) => ({
@@ -87,7 +90,7 @@ export const tweetsApi = createApi(
           },
           body
         }),
-        invalidatesTags: ["Tweets"],
+        invalidatesTags: ["Tweets", "TweetById"],
       }),
       reTweet: builder.mutation({
         query: ({ tweetId, token }) => ({
@@ -111,9 +114,33 @@ export const tweetsApi = createApi(
         }),
         invalidatesTags: ["Tweets"],
       }),
+      likeComment: builder.mutation({
+        query: ({ commentId, token }) => ({
+          url: `comments/like/${commentId}`,
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'content-type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        invalidatesTags: ["TweetById"],
+      }),
+      dislikeComment: builder.mutation({
+        query: ({ commentId, token }) => ({
+          url: `comments/like/${commentId}`,
+          method: 'delete',
+          credentials: 'include',
+          headers: {
+            'content-type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        invalidatesTags: ["TweetById"],
+      }),
     }),
 
   }
 )
 
-export const { useGetAllTweetsQuery, useGetAllTweetsFollowedQuery, useGetTweetsByUserIdQuery, useCreateTweetMutation, useLikeTweetMutation, useCreateCommentTweetMutation, useReTweetMutation, useUndoReTweetMutation, useGetTweetByIdQuery, useGetCommentByIdQuery } = tweetsApi
+export const { useGetAllTweetsQuery, useGetAllTweetsFollowedQuery, useGetTweetsByUserIdQuery, useCreateTweetMutation, useLikeTweetMutation, useLikeCommentMutation, useDislikeCommentMutation, useCreateCommentTweetMutation, useReTweetMutation, useUndoReTweetMutation, useGetTweetByIdQuery, useGetCommentByIdQuery } = tweetsApi

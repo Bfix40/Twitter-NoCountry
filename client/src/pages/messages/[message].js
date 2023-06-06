@@ -13,6 +13,7 @@ import { IoImage } from 'react-icons/io5'
 import { useDispatch } from 'react-redux'
 import io from "socket.io-client"
 import { API_URL } from '../../../utils/api'
+import { formatDate } from '../../../utils/formateadorTiemposRelativos'
 let socket
 
 const Message = () => {
@@ -22,7 +23,7 @@ const Message = () => {
   const [messages, setMessages] = useState([])
   const { data: session } = useSession()
   const { query } = useRouter()
-  const { data: profile } = useGetUserByIdQuery(query.message)
+  const { data: profile } = useGetUserByIdQuery({ userId: query?.message, token: session?.token })
 
   function handleResizeInput(e) {
     if (e.target.value.length < 50) {
@@ -40,11 +41,12 @@ const Message = () => {
     try {
       if (session?.user?._id && profile?._id) {
         const response = await fetch(`${API_URL}/api/messages?senderId=${session?.user?._id}&receiverId=${profile?._id}&timestamp=${new Date().getTime()}`, {
-          method: "GET",
+          method: 'GET',
+          credentials: 'include',
           headers: {
-            'content-type': 'application/json'
+            'content-type': 'application/json',
+            Authorization: `Bearer ${session.token}`,
           },
-          credentials: 'include'
         });
         if (response) {
           const data = await response.json();
@@ -92,7 +94,7 @@ const Message = () => {
       // Volver a solicitar los mensajes
       socket.on('updateMessages', () => {
         loadMessages()
-        dispatch(fetchMessages(session.token))
+        dispatch(fetchMessages({ userId: session?.user?._id, token: session?.token }))
       })
 
       socket.emit('joinChat', profile?._id)
@@ -141,7 +143,7 @@ const Message = () => {
         <h3 className='text-gray-400 mb-4'>@{profile?.username}</h3>
 
         <p>{profile?.bio}</p>
-        <p>Se unio en {profile?.createdAt ? profile?.createdAt : "2 de marzo"} - {profile?.followers?.length} Seguidores</p>
+        <p>Se unio el {profile?.createdAt ? formatDate(profile?.createdAt) : "2 de marzo"} - {profile?.followers?.length} Seguidores</p>
       </Link>
       <hr className='border-black/5 dark:border-white/20 w-[95%] mx-auto'></hr>
 

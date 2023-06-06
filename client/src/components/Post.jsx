@@ -70,6 +70,7 @@ const Post = () => {
           </div>
           <div className="ml-3 w-full flex-row ">
             <textarea
+              id="tweet"
               className="my-2 w-full resize-none bg-transparent text-xl focus:outline-none dark:text-white"
               placeholder="¿Qué está pasando?"
               value={tweetText}

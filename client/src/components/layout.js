@@ -10,6 +10,7 @@ import {
   HelpIcon,
   HomeIcon,
   ListIcon,
+  LogOutIcon,
   MenuIcon,
   MessagesIcon,
   MoreIcon,
@@ -41,9 +42,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMessages } from "@/redux/features/messagesSlice";
 import io from "socket.io-client"
 import { API_URL } from "../../utils/api";
+import { IoClose } from "react-icons/io5";
 let socket
 
 function Header() {
+  const [openDrawer, setOpenDrawer] = useState(false)
+  const [openDrawerOption, setOpenDrawerOption] = useState(false)
   const { pathname, query } = useRouter();
   const { data: session, status } = useSession();
   const [openSettings, setOpenSettings] = useState(false);
@@ -70,12 +74,144 @@ function Header() {
   );
 
   return (
-    <header className={"flex w-full justify-end md:w-24 lg:max-w-[300px] xl:w-full " + (pathname.includes("messages") ? "max-sm:hidden" : "")}>
+    <header className={"flex w-full justify-end md:w-24 lg:max-w-[300px] xl:w-full " + (pathname.includes("messages") || pathname === "/[profile]" ? "max-sm:hidden" : "")}>
+      <div
+        className={"md:hidden w-full shadowtw overflow-y-scroll flex flex-col gap-5 px-4 pb-16 max-w-[85vw] border-r border-r-black/10 dark:border-r-white/20 overflow-hidden h-full fixed top-0 left-0 z-50 transition-transform duration-300 dark:text-white bg-white dark:bg-black " + (openDrawer ? "translate-x-0" : "-translate-x-[100vw]")}
+      >
+        <div className="w-full py-3 items-center mx-auto flex gap-4 justify-between sticky top-0 bg-white dark:bg-black">
+          <p className="truncate font-semibold text-lg">Información de la cuenta</p>
+          <button onClick={() => setOpenDrawer(!openDrawer)}><IoClose size={24} /></button>
+        </div>
+
+        <div className="flex flex-col items-start">
+          <Image
+            onClick={() => setOpenDrawer(!openDrawer)}
+            className="h-10 w-10 rounded-full object-cover"
+            src={
+              session?.user
+                ? session?.user?.image
+                : "/img/defaultprofile.jpg"
+            }
+            width={24}
+            height={24}
+            alt="Foto de perfil"
+          />
+          <p className="font-bold text-lg mt-2">{session?.user?.name}</p>
+          <p className="text-gray-500 text-sm">@{session?.user?.username}</p>
+
+          <div className="flex items-center gap-4 dark:text-white mt-3">
+            <Link
+              className="flex items-center gap-1"
+              href={"/" + (session?.user?.username ? session?.user?.username : "elonmusk") + "/following"}
+            >
+              {session?.user?.following ? session?.user?.following.length : 0} <p className="text-sm text-gray-500">Siguiendo</p>
+            </Link>
+
+            <Link
+              className="flex items-center gap-1"
+              href={"/" + (session?.user?.username ? session?.user?.username : "elonmusk") + "/followers"}
+            >
+              {session?.user?.followers ? session?.user?.followers.length : 0} <p className="text-sm text-gray-500">Seguidores</p>
+            </Link>
+          </div>
+
+        </div>
+
+        <Link
+          href={"/" + session?.user?.username}
+          className="flex w-fit items-center my-1 gap-6 rounded-3xl text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 font-bold"
+        >
+          <ProfileIcon size={24} />
+          <p className="dark:text-white">Perfil</p>
+        </Link>
+
+        <Link
+          href="/explore"
+          className="flex w-fit items-center my-1 gap-6 rounded-3xl text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 font-bold"
+        >
+          <ExploreIcon size={24} />
+          <p className="dark:text-white">Explorar</p>
+        </Link>
+
+        <Link
+          href="/lists"
+          className="flex w-fit items-center my-1 gap-6 rounded-3xl text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 font-bold"
+        >
+          <ListIcon size={24} />
+          <p className="dark:text-white">Listas</p>
+        </Link>
+
+        <Link
+          href="/lists"
+          className="flex w-fit items-center my-1 gap-6 rounded-3xl text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 font-bold"
+        >
+          <BookmarkIcon size={24} />
+          <p className="dark:text-white">Guardados</p>
+        </Link>
+
+        <Link
+          href="/notifications"
+          className="flex w-fit items-center my-1 gap-6 rounded-3xl text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 font-bold"
+        >
+          <NotificationIcon size={24} />
+          <p className="dark:text-white">Notificaciones</p>
+        </Link>
+        <hr className="h-1 w-full -my-1 opacity-50" />
+        <button
+          onClick={() => setOpenDrawerOption(!openDrawerOption)}
+          className="flex w-full items-center justify-between gap-1 text-left font-semibold transition duration-300"
+        >
+          Configuración y Soporte{" "}
+          <ChevronUpIcon size={18} active={openDrawerOption} />
+        </button>
+
+        <div
+          className={
+            "w-full transition-[height] duration-500 " +
+            (openDrawerOption ? "h-[200px]" : "h-0 overflow-hidden")
+          }
+        >
+          <Link
+            href="/settings"
+            className="flex w-full items-center gap-4 py-2.5 text-left text-sm font-semibold transition duration-300 hover:bg-black/5 hover:dark:bg-white/10"
+          >
+            <SettingsIcon size={18} /> Configuración y Privacidad
+          </Link>
+          <a href="https://help.twitter.com/es" target="_blank" rel="noreferrer noopener" className="flex w-full items-center gap-4 py-2.5 text-left text-sm font-semibold transition duration-300 hover:bg-black/5 hover:dark:bg-white/10">
+            <HelpIcon size={18} /> Centro de Ayuda
+          </a>
+          <Darkmode drawer={true} />
+          <button className="flex w-full items-center gap-4 py-2.5 text-left text-sm font-semibold transition duration-300 hover:bg-black/5 hover:dark:bg-white/10">
+            <ShortcutsIcon size={18} /> Atajos de teclado
+          </button>
+          <button
+            onClick={() => signOut()}
+            className="flex w-full items-center gap-4 py-2.5 text-left text-sm font-semibold transition duration-300 hover:bg-black/5 hover:dark:bg-white/10"
+          >
+            <LogOutIcon size={18} /> Cerrar Sesión
+          </button>
+        </div>
+      </div>
       <div className="noscrollbar flex h-full min-w-max flex-col items-center gap-5 overflow-y-auto border-r-black/5 px-2 dark:border-r-white/20 max-md:w-full md:fixed md:border-r xl:w-[300px] xl:px-4">
         <div className="fixed top-0 flex w-full items-center justify-between border-b border-b-black/10 bg-white px-4 py-3 dark:border-b-white/20 dark:bg-black md:hidden">
-          <Link href="/home">
-            <TwitterIcon size={24} />
-          </Link>
+          {
+            status === "unauthenticated"
+              ? <Link href="/home">
+                  <TwitterIcon size={24} />
+                </Link>
+              : <Image
+                  onClick={() => setOpenDrawer(!openDrawer)}
+                  className="h-8 w-8 rounded-full object-cover"
+                  src={
+                    session?.user
+                      ? session?.user?.image
+                      : "/img/defaultprofile.jpg"
+                  }
+                  width={24}
+                  height={24}
+                  alt="Foto de perfil"
+                />
+          }
 
           <div className="group flex w-full max-w-[60%] items-center gap-1 overflow-hidden rounded-2xl border border-black/20 bg-slate-100/20 px-2 transition duration-200 focus-within:border-indigo-500 dark:border-white/20 dark:bg-slate-500/20  dark:focus-within:border-indigo-500">
             <button>
@@ -249,7 +385,10 @@ function Header() {
           ) : null}
 
           {session && (
-            <button className="mt-5 w-fit rounded-full bg-[#1d9bf0] p-3.5 transition duration-300 hover:bg-[#1a8cd8] xl:w-[85%] xl:p-3">
+            <button
+              onClick={() => document.querySelector("#tweet")?.focus()}
+              className="mt-5 w-fit rounded-full bg-[#1d9bf0] p-3.5 transition duration-300 hover:bg-[#1a8cd8] xl:w-[85%] xl:p-3"
+            >
               <div className="xl:hidden">
                 <CreateTweetIcon size={24} />
               </div>
@@ -320,7 +459,6 @@ function Header() {
                     width={50}
                     height={50}
                     alt="Foto de perfil"
-                    unoptimized
                   />
                 )}
                 <div className="text-base text-left max-xl:hidden">
@@ -348,47 +486,51 @@ function Footer() {
   const { status } = useSession();
   return (
     <>
-      <nav className={"fixed inset-x-0 bottom-0 flex items-center justify-around border-t border-t-black/10 bg-white p-2 dark:border-t-white/20 dark:bg-black md:hidden " + (pathname.includes("messages/") ? "hidden" : "")}>
-        <Link
-          href="/home"
-          className={
-            "flex w-fit items-center gap-4 rounded-full p-2 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 " +
-            (pathname === "/" ? "font-bold" : "")
-          }
-        >
-          <HomeIcon size={28} active={pathname === "/"} />
-        </Link>
+      {
+        status === "unauthenticated"
+          ? null
+          : <nav className={"fixed inset-x-0 bottom-0 flex items-center justify-around border-t border-t-black/10 bg-white p-2 dark:border-t-white/20 dark:bg-black md:hidden " + (pathname.includes("messages/") ? "hidden" : "")}>
+          <Link
+            href="/home"
+            className={
+              "flex w-fit items-center gap-4 rounded-full p-2 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 " +
+              (pathname === "/" ? "font-bold" : "")
+            }
+          >
+            <HomeIcon size={28} active={pathname === "/"} />
+          </Link>
 
-        <Link
-          href="/explore"
-          className={
-            "flex w-fit items-center gap-4 rounded-full p-2 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 " +
-            (pathname === "/" ? "font-bold" : "")
-          }
-        >
-          <SearchIcon size={28} active={pathname === "/explore"} />
-        </Link>
+          <Link
+            href="/explore"
+            className={
+              "flex w-fit items-center gap-4 rounded-full p-2 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 " +
+              (pathname === "/" ? "font-bold" : "")
+            }
+          >
+            <SearchIcon size={28} active={pathname === "/explore"} />
+          </Link>
 
-        <Link
-          href="/notifications"
-          className={
-            "flex w-fit items-center gap-4 rounded-full p-2 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 " +
-            (pathname === "/" ? "font-bold" : "")
-          }
-        >
-          <NotificationIcon size={28} active={pathname === "/notifications"} />
-        </Link>
+          <Link
+            href="/notifications"
+            className={
+              "flex w-fit items-center gap-4 rounded-full p-2 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 " +
+              (pathname === "/" ? "font-bold" : "")
+            }
+          >
+            <NotificationIcon size={28} active={pathname === "/notifications"} />
+          </Link>
 
-        <Link
-          href="/messages"
-          className={
-            "flex w-fit items-center gap-4 rounded-full p-2 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 " +
-            (pathname === "/" ? "font-bold" : "")
-          }
-        >
-          <MessagesIcon size={28} active={pathname.includes("messages")} />
-        </Link>
-      </nav>
+          <Link
+            href="/messages"
+            className={
+              "flex w-fit items-center gap-4 rounded-full p-2 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 " +
+              (pathname === "/" ? "font-bold" : "")
+            }
+          >
+            <MessagesIcon size={28} active={pathname.includes("messages")} />
+          </Link>
+        </nav>
+      }
 
       <footer className={"w-[350px] max-lg:hidden " + (pathname.includes("messages") || pathname.includes("settings") ? "md:hidden" : "")}>
         <div className="noscrollbar fixed flex max-w-[350px] flex-col gap-5 overflow-y-scroll border-l-black/5 px-4 dark:border-l-white/20 md:h-full md:border-l">
@@ -440,25 +582,37 @@ export default function Layout({ children }) {
   async function handleSnooze(senderId, value, username) {
     await fetch(`${API_URL}/api/chat/snooze?senderId=${senderId}&value=${value}&username=${username}`, {
       method: 'PATCH',
-      credentials: "include"
+      credentials: 'include',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${session.token}`,
+      },
     })
 
-    dispatch(fetchMessages(session?.user?._id))
+    dispatch(fetchMessages({ userId: session?.user?._id, token: session?.token }))
   }
 
   async function handlePin(senderId, value, username) {
     await fetch(`${API_URL}/api/chat/pin?senderId=${senderId}&value=${value}&username=${username}`, {
       method: 'PATCH',
-      credentials: "include"
+      credentials: 'include',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${session.token}`,
+      },
     })
 
-    dispatch(fetchMessages(session?.user?._id))
+    dispatch(fetchMessages({ userId: session?.user?._id, token: session?.token }))
   }
 
   async function handleDelete(senderId, receiverId, username) {
     await fetch(`${API_URL}/api/chat?senderId=${senderId}&receiverId=${receiverId}&username=${username}`, {
       method: 'DELETE',
-      credentials: "include"
+      credentials: 'include',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${session.token}`,
+      },
     })
 
     location.replace("/messages")
@@ -478,11 +632,11 @@ export default function Layout({ children }) {
     socket.emit('joinChat', session?.user?._id)
 
     socket.on('receiveMessage', () => {
-      dispatch(fetchMessages(session?.user?._id))
+      dispatch(fetchMessages({ userId: session?.user?._id, token: session?.token }))
     })
 
-    if (session?.user?._id) {
-      dispatch(fetchMessages(session?.user?._id))
+    if (session?.user?._id && session?.token) {
+      dispatch(fetchMessages({ userId: session?.user?._id, token: session?.token }))
     }
   }, [session?.user?._id, dispatch])
 
@@ -490,7 +644,7 @@ export default function Layout({ children }) {
     <>
       <div className="flex w-full justify-center max-md:flex-col">
         <Header />
-        <main className={"noscrollbar w-full overflow-y-scroll h-full md:max-w-[600px] " + (pathname.includes("settings") || pathname.includes("messages") ? "order-2 " : "") + (pathname.includes("messages") ? "" : "max-md:my-16")}>
+        <main className={"noscrollbar w-full overflow-y-scroll h-full md:max-w-[600px] " + (pathname.includes("settings") || pathname.includes("messages") ? "order-2 " : "") + (pathname.includes("messages") || pathname === "/[profile]" ? "" : "max-md:my-16")}>
           {children}
         </main>
         {
@@ -601,7 +755,7 @@ export default function Layout({ children }) {
                         {e.name}
                       </p>
                       <small className="text-gray-400 truncate">@{e.username}</small>
-                      <small className="text-gray-400 truncate">{formatDate(e.time)}</small>
+                      <small className="text-gray-400 truncate">{formatDate(e.time, true)}</small>
                       <Popover className="-mt-1 ml-auto">
                         <Transition
                           enter="transition duration-200 ease-out"

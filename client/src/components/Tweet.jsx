@@ -1,20 +1,18 @@
-import React, { useContext, useRef } from 'react'
+import React, { useContext } from 'react'
 import { AppContext } from '@/context/AppContext'
 import Image from 'next/image'
 import { BiMessageRounded } from 'react-icons/bi'
 import { HiBadgeCheck } from 'react-icons/hi'
 import { FiShare } from 'react-icons/fi'
-import { SlOptions } from 'react-icons/sl'
 import { IoStatsChart } from 'react-icons/io5'
 import { IoIosLock } from 'react-icons/io'
 import Likes from './Likes'
 import Link from 'next/link'
 import { useSession } from "next-auth/react";
 import { URL_CLIENT } from '../../utils/api'
-import { Popover, Transition } from '@headlessui/react'
-import { ReportIcon, TrashIcon } from './icons'
 import TimeAgo from './TimeAgo'
 import Retweets from './Retweets'
+import Options from './Options'
 const Tweet = (props) => {
   const { id, _id, content, timestamp = 0, author, comments = [], createdAt, __v, images = [], isComment = false } = props
   const formatNum = (num) => (num === 0 ? "" : num);
@@ -78,7 +76,7 @@ const Tweet = (props) => {
                         {
                             images?.length ? (
                                 <div className='max-w-fit max-h-fit py-2'>
-                                    <img src={images[0]} className="object-fit rounded-3xl bg-white border dark:border-white/20 border-black/5 " onError={handleImageError} alt="postImg" />
+                                    <img src={images[0]} className="object-fit rounded-3xl border dark:border-white/20 border-black/5 " onError={handleImageError} alt="postImg" />
                                 </div>
                             ) : null
                         }
@@ -104,7 +102,7 @@ const Tweet = (props) => {
                     {
                         images?.length ? (
                             <div className='max-w-fit max-h-fit py-2'>
-                                <img src={images[0]} onError={handleImageError} className="object-fit rounded-3xl bg-white border dark:border-white/20 border-black/5 " alt="postImg" />
+                                <img src={images[0]} onError={handleImageError} className="object-fit rounded-3xl border dark:border-white/20 border-black/5 " alt="postImg" />
                             </div>
                         ) : null
                     }
@@ -118,11 +116,11 @@ const Tweet = (props) => {
                                         <BiMessageRounded className='icons group-hover:bg-[#1C9BEF]/10' title='Responder' />
                                         <p className='text-sm' >{formatNum(comments.length)}</p>
                                     </div>
-                                    <Retweets {...props} />
+                                    <Retweets {...props} loggedInUserId={session?.user?._id} />
                                 </>
                             )
                     }
-                    <Likes {...props} />
+                    <Likes {...props} isComment={isComment} />
                     <div className='flex items-center align-middle space-x-1 cursor-pointer hover:text-[#1C9BEF] group' >
                         <IoStatsChart className='icons group-hover:bg-[#1C9BEF]/10' title='Ver' />
                         <p className='text-sm' >{__v}</p>
@@ -134,43 +132,6 @@ const Tweet = (props) => {
             </div>
             <Options {...props} user={session?.user} />
         </div>
-  )
-}
-
-const Options = ({ user, author }) => {
-  const popperRef = useRef(null);
-
-  return (
-        <div className='w-auto flex items-center align-middle -ml-5 cursor-pointer hover:text-[#1d9bf0] group' >
-        <Popover className="-mt-1 ml-auto">
-            <Transition
-                enter="transition duration-200 ease-out"
-                enterFrom="transform scale-95 opacity-0"
-                enterTo="transform scale-100 opacity-100"
-                leave="transition duration-95 ease-out"
-                leaveFrom="transform scale-100 opacity-100"
-                leaveTo="transform scale-95 opacity-0"
-            >
-                <Popover.Panel className="dark:shadowtw absolute right-0 flex h-fit w-max flex-col overflow-hidden rounded-xl border bg-white font-medium dark:border-white/20 dark:bg-black dark:text-white">
-                    {
-                       user?._id !== author?._id
-                         ? <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
-                        <ReportIcon size={20} /> Denunciar la conversación
-                    </button>
-                         : <button className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-bold text-red-600 transition duration-200 hover:bg-black/5 dark:hover:bg-white/10">
-                        <TrashIcon size={20} /> Eliminar conversación
-                    </button>
-                    }
-                </Popover.Panel>
-            </Transition>
-            <Popover.Button
-                className={"outline-none"}
-                ref={popperRef}
-            >
-                <SlOptions className='icons w-10 h-10 group-hover:bg-[#1C9BEF]/10' title='Mas opciones' />
-            </Popover.Button>
-        </Popover>
-    </div>
   )
 }
 
