@@ -152,7 +152,12 @@ const Message = () => {
         messages.length
           ? Children.toArray(
             messages.map((message) => (
-              <p className={(message.senderId === session?.user?._id ? "ml-auto bg-indigo-500" : "mr-auto bg-blue-500") + " py-2 px-3 rounded-3xl break-words max-w-full text-white w-fit"}>{message.message}</p>
+              <div className={(message.senderId === session?.user?._id ? "ml-auto text-right" : "mr-auto text-left") + " w-fit"}>
+                <p className={(message.senderId === session?.user?._id ? "ml-auto bg-indigo-500 rounded-br-md" : "mr-auto bg-blue-500 rounded-bl-md") + " -mb-0.5 py-2 px-3 rounded-3xl break-words max-w-full text-white w-fit"}>
+                  {message.message}
+                </p>
+                <span className={(message.senderId === session?.user?._id ? "mr-0.5" : "ml-0.5") + " text-gray-500 text-[12px]"}>{formatDate(message.createdAt, true)} ·</span>
+              </div>
             ))
           )
           : null

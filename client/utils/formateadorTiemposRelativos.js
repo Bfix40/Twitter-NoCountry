@@ -31,5 +31,15 @@ export const getTimeAgo = (timestamp) => {
 
 export function formatDate(dateString, short) {
   const date = new Date(dateString)
-  return short ? date.toLocaleDateString("es-ES", { day: 'numeric', month: 'long' }) : date.toLocaleDateString("es-ES", { day: 'numeric', month: 'long', year: 'numeric' })
+  const today = new Date()
+
+  if (short) {
+    if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth()) {
+      return date.toLocaleTimeString("es-ES", { hour: 'numeric', minute: 'numeric' })
+    } else {
+      return date.toLocaleDateString("es-ES", { day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' })
+    }
+  }
+
+  return date.toLocaleDateString("es-ES", { day: 'numeric', month: 'long', year: 'numeric' })
 }

@@ -740,7 +740,7 @@ export default function Layout({ children }) {
                 <Link
                   href={"/messages/" + e.username}
                   key={e._id}
-                  className={"flex flex-wrap gap-4 p-3 hover:bg-black/5 dark:hover:bg-white/10 max-w-full " + (asPath.includes(e.username) ? "bg-black/5 dark:bg-white/10" : "")}
+                  className={"flex gap-4 p-3 hover:bg-black/5 dark:hover:bg-white/10 max-w-full " + (asPath.includes(e.username) ? "bg-black/5 dark:bg-white/10" : "")}
                 >
                   <Image
                     className="h-14 w-14 rounded-full"
@@ -751,11 +751,13 @@ export default function Layout({ children }) {
                   />
                   <div className="flex flex-col md:max-w-[260px] w-full">
                     <div className="flex items-center gap-1 w-full">
-                      <p className="font-bold dark:text-white truncate">
-                        {e.name}
-                      </p>
-                      <small className="text-gray-400 truncate">@{e.username}</small>
-                      <small className="text-gray-400 truncate">{formatDate(e.time, true)}</small>
+                      <div className="flex items-center gap-1 w-full overflow-hidden max-sm:max-w-[50vw]">
+                        <p className="font-bold dark:text-white truncate">
+                          {e.name}
+                        </p>
+                        <small className="text-gray-400 truncate">@{e.username}</small>
+                        <small className="text-gray-400 truncate">{formatDate(e.time, true)}</small>
+                      </div>
                       <Popover className="-mt-1 ml-auto">
                         <Transition
                           enter="transition duration-200 ease-out"
