@@ -215,7 +215,7 @@ const Ubicacion = ({ setUbicacion }) => {
           )
             .then((res) => res.json())
             .then((prueba) =>
-              setUbicacion(`${prueba.address.city}, ${prueba.address.country}`)
+              setUbicacion(`${prueba.address.city || prueba.address.state}, ${prueba.address.country}`)
             );
         },
         (error) => {
