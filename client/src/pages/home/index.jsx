@@ -7,7 +7,8 @@ import Link from "next/link";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { useGetAllTweetsQuery } from "@/redux/services/tweetsApi";
+import { useGetAllTweetsQuery, useGetTopHashtagsQuery } from "@/redux/services/tweetsApi";
+
 import SkeletonTweet from "@/components/SkeletonTweet";
 import Retweet from "@/components/Retweet";
 
@@ -15,6 +16,9 @@ function Home() {
   const { isLoading, data } = useGetAllTweetsQuery(undefined, {
     refetchOnReconnect: true,
   });
+  // const { data: top } = useGetTopHashtagsQuery(undefined, {
+  //   refetchOnReconnect: true,
+  // });
   const [isSelected, setIsSelected] = useState("para-ti");
   const { status } = useSession();
   const router = useRouter();
@@ -24,7 +28,7 @@ function Home() {
     router.push("/");
     return <></>;
   }
-
+  // console.log("top#", top)
   return (
     <>
       <Head>

@@ -30,7 +30,7 @@ const Likes = ({ _id, likes = [], isComment }) => {
   return (
         <div onClick={onClickLike} className={`flex items-center align-middle space-x-1 cursor-pointer group ${isLiked ? 'text-[#f91880]' : 'hover:text-[#f91880]'}`} >
             {isLiked ? <AiFillHeart className='icons group-hover:bg-[#f91880]/10' title='Me gusta' /> : <AiOutlineHeart className='icons group-hover:bg-[#f91880]/10' title='Me gusta' />}
-            <p className='text-sm' >{formatNum(likes.length)}</p>
+            <p className='text-sm max-sm:text-xs' >{formatNum(likes.length)}</p>
         </div>
   )
 }

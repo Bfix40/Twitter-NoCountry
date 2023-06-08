@@ -14,7 +14,7 @@ const CommentById = ({ id }) => {
   return (
     <div className="ml-8 border-l-2 border-[#1d9bf0] bg-white dark:bg-black" >
      {
-        (isLoading) ? (
+        isLoading ? (
             < SkeletonTweet />
         )
           : (
@@ -22,12 +22,12 @@ const CommentById = ({ id }) => {
             )
     }
     {
-        isError ? (
+       isError ? (
             <div className="grid place-content-center my-40 text-center gap-y-8 dark:text-white">
       <p className="text-7xl font-semibold">Oops</p>
       <p className="text-3xl font-semibold">Esta pagina no existe.</p>
     </div>
-        ) : null
+       ) : null
     }
 
     {

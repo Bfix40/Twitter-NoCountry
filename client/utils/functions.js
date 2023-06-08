@@ -37,3 +37,9 @@ export function BlockTransition (selector, entering, leaving) {
     document.body.removeEventListener('click', handleOutsideClick);
   }
 }
+
+export const obtenerHashtags = (texto) => {
+  const regex = /#(\w+)/g;
+  const resultados = texto.match(regex) || [];
+  return resultados.map(palabra => palabra.slice(1));
+}

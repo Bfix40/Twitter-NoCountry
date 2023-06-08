@@ -193,7 +193,7 @@ function Header() {
         </div>
       </div>
       <div className="noscrollbar flex h-full min-w-max flex-col items-center gap-5 overflow-y-auto border-r-black/5 px-2 dark:border-r-white/20 max-md:w-full md:fixed md:border-r xl:w-[300px] xl:px-4">
-        <div className="fixed top-0 flex w-full items-center justify-between border-b border-b-black/10 bg-white px-4 py-3 dark:border-b-white/20 dark:bg-black md:hidden">
+        <div className="fixed z-[9] top-0 flex w-full items-center justify-between border-b border-b-black/10 bg-white px-4 py-3 dark:border-b-white/20 dark:bg-black md:hidden">
           {
             status === "unauthenticated"
               ? <Link href="/home">

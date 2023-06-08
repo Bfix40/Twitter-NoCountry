@@ -127,10 +127,6 @@ function ModalRegister({ setModalRegister }) {
 export default function FooterUnauthenticated() {
   const [showModal, setShowModal] = useState(false);
   const [modalRegister, setModalRegister] = useState(false);
-
-  function handleModal() {
-    setShowModal(!showModal);
-  }
   return (
     <>
       {" "}

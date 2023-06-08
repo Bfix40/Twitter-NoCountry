@@ -9,6 +9,7 @@ import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { useCreateCommentTweetMutation } from "@/redux/services/tweetsApi";
 import { useSession } from "next-auth/react";
+import { obtenerHashtags } from "../../utils/functions";
 
 const Comment = ({ tweetId, closeModal }) => {
   const { data: session, status } = useSession();
@@ -28,7 +29,7 @@ const Comment = ({ tweetId, closeModal }) => {
     const body = {
         content: tweetText,
         tweetId,
-        hashtags: ["Tweet"]
+        hashtags: obtenerHashtags(tweetText)
     }
       await createCommentTweet({ body, token: session.token });
       setTweetText("");

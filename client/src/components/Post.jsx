@@ -7,10 +7,10 @@ import { BsEmojiSmile } from "react-icons/bs";
 import { BiCalendar, BiMap } from "react-icons/bi";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
-// import { createTweet } from "../../lib/tweets";
 import { useCreateTweetMutation } from "@/redux/services/tweetsApi";
 import { useSession } from "next-auth/react";
-// import { useRouter } from "next/router";
+import { obtenerHashtags } from "../../utils/functions";
+import ModalWarning from "./ModalWarning";
 
 const Post = () => {
   const { data: session, status } = useSession();
@@ -18,9 +18,16 @@ const Post = () => {
   const [ubicacion, setUbicacion] = useState("");
   const [files, setFiles] = useState([]);
   const [createTweet] = useCreateTweetMutation();
+  const [warning, setWarning] = useState({})
+  const [modal, setModal] = useState(false)
 
   const handleTweetChange = (event) => {
-    setTweetText(event.target.value);
+    const content = event.target.value
+    if (content.length <= 98) {
+      setTweetText(content);
+    } else {
+      setTweetText(content.slice(0, 98));
+    }
   };
 
   const handleTweetSubmit = async (event) => {
@@ -32,16 +39,39 @@ const Post = () => {
 
     if (tweetText.length !== 0 || files.length !== 0) {
       body.append("content", tweetText);
-      body.append("hashtags", ["Tweet"]);
-      createTweet({ body, token: session.token });
-      setTweetText("");
-      setFiles([]);
-      setUbicacion("");
+      body.append("hashtags", obtenerHashtags(tweetText));
+      await createTweet({ body, token: session.token }).then(async res => {
+        if (!res.data.message) {
+          setTweetText("");
+          setFiles([]);
+          setUbicacion("");
+        } else {
+          await setWarning(res.data)
+          setModal(true)
+        }
+      });
     }
   };
+
+  const confirmSubmit = async () => {
+    if (tweetText.length !== 0 || files.length !== 0) {
+      const body = new FormData();
+    if (files.length !== 0) {
+      body.append("images", files[0].file);
+    }
+    body.append("content", tweetText);
+    body.append("hashtags", obtenerHashtags(tweetText));
+    body.append("confirmation", true);
+    await createTweet({ body, token: session.token });
+    setTweetText("");
+    setFiles([]);
+    setUbicacion("");
+    setModal(false)
+  }
+  }
   return (
     <div className="h-auto w-full border-b border-black/5 dark:border-white/20 dark:bg-black dark:text-[#e7e9ea]">
-      <div className="p-4">
+      <div className="p-4 max-sm:px-1">
         <div className="flex w-full items-start">
           <div className="flex-shrink-0">
             {!session?.user?.image || status === "loading" ? (
@@ -71,20 +101,20 @@ const Post = () => {
           <div className="ml-3 w-full flex-row ">
             <textarea
               id="tweet"
-              className="my-2 w-full resize-none bg-transparent text-xl focus:outline-none dark:text-white"
+              className=" max-sm:my-0 w-full h-[80px] resize-none p-2 bg-transparent text-xl max-sm:text-base focus:outline-none dark:text-white"
               placeholder="¿Qué está pasando?"
               value={tweetText}
               onChange={handleTweetChange}
             />
 
-            <div className="grid max-h-fit w-auto grid-cols-2 gap-2 py-2">
+            <div className={`grid max-h-fit ${files.length ? "" : "hidden"} w-auto grid-cols-2 gap-2 py-2 max-sm:py-0`}>
               {files.map((file) => (
                 <div className="relative" key={file.id}>
                   <IoCloseOutline
                     onClick={() =>
                       setFiles(files.filter((el) => el.id !== file.id))
                     }
-                    className="z-5 absolute left-0 top-0 m-1 h-9 w-9 cursor-pointer rounded-full bg-black/70 p-2 text-white backdrop-blur-lg hover:bg-black/60"
+                    className="z-[5] absolute left-0 top-0 m-1 h-9 w-9 cursor-pointer rounded-full bg-black/70 p-2 text-white backdrop-blur-lg hover:bg-black/60"
                     title="Eliminar"
                   />
                   {file.file.type.startsWith("image/") ? (
@@ -94,14 +124,14 @@ const Post = () => {
                       key={file.id}
                       src={URL.createObjectURL(file.file)}
                       alt={file.file.name}
-                      className="max-h-80 w-full rounded-2xl object-cover "
+                      className="max-h-80 max-sm:max-h-60 w-full rounded-2xl object-cover "
                     />
                   ) : (
                     <video
                       key={file.name}
                       src={URL.createObjectURL(file.file)}
                       alt={file.name}
-                      className="max-h-80 w-full rounded-2xl object-cover "
+                      className="max-h-80 max-sm:max-h-60 w-full z-[3] relative rounded-2xl object-cover "
                       controls
                     />
                   )}
@@ -109,11 +139,11 @@ const Post = () => {
               ))}
             </div>
 
-            <div className="my-2 w-full justify-end border-b border-black/5 py-2 dark:border-white/20">
+            <div className={`my-2 w-full justify-end border-b border-black/5 py-2 dark:border-white/20`}>
               {ubicacion.length ? (
                 <span
                   onClick={() => setUbicacion("")}
-                  className="inline-flex cursor-pointer items-center rounded-full bg-[#1C9BEF]/20 px-2 py-1 font-semibold text-[#1C9BEF] hover:bg-[#ff1100]/30 hover:text-[#ff1100]/80"
+                  className="inline-flex cursor-pointer items-center max-sm:text-xs rounded-full bg-[#1C9BEF]/20 px-2 py-1 font-semibold text-[#1C9BEF] hover:bg-[#ff1100]/30 hover:text-[#ff1100]/80"
                 >
                   {" "}
                   <BiMap className="mr-1" title="Etiquetar ubicacion" />{" "}
@@ -123,8 +153,8 @@ const Post = () => {
                 ""
               )}
             </div>
-            <div className="flex w-full flex-row justify-between ">
-              <div className="flex w-full items-center gap-1">
+            <div className="flex flex-row justify-between ">
+              <div className="flex w-auto items-center gap-1 max-sm:gap-0">
                 <FileUploader files={files} setFiles={setFiles} />
                 <div className="group flex cursor-pointer items-center space-x-1 align-middle text-[#1C9BEF]">
                   <HiOutlineGif
@@ -153,13 +183,16 @@ const Post = () => {
                 <Ubicacion setUbicacion={setUbicacion} />
               </div>
               <button
-                className="duration-400 rounded-full bg-[#1d9bf0] px-4 font-semibold text-white transition-opacity hover:bg-[#1a8cd8] disabled:cursor-not-allowed disabled:bg-[#1a8cd8] disabled:opacity-70"
+                className="duration-400 rounded-full max-sm:text-xs bg-[#1d9bf0] max-sm:px-3 px-4 font-semibold text-white transition-opacity hover:bg-[#1a8cd8] disabled:cursor-not-allowed disabled:bg-[#1a8cd8] disabled:opacity-70"
                 type="submit"
                 disabled={!tweetText.length && !files.length}
                 onClick={handleTweetSubmit}
               >
                 Twittear
               </button>
+              {
+                modal ? <ModalWarning close={() => setModal(false)} confirmSubmit={confirmSubmit} forbiddenWords={warning.forbiddenWords} /> : null
+              }
             </div>
           </div>
         </div>
@@ -214,8 +247,10 @@ const Ubicacion = ({ setUbicacion }) => {
             `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}`
           )
             .then((res) => res.json())
-            .then((prueba) =>
-              setUbicacion(`${prueba.address.city || prueba.address.state}, ${prueba.address.country}`)
+            .then((prueba) => {
+                console.log(prueba)
+                setUbicacion(`${prueba.address.city || prueba.address.state}, ${prueba.address.country}`)
+              }
             );
         },
         (error) => {
