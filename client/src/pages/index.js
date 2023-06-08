@@ -1,4 +1,3 @@
-
 import SkeletonTweet from "@/components/SkeletonTweet";
 import Tweet from "@/components/Tweet";
 import Retweet from "@/components/Retweet";
@@ -26,14 +25,20 @@ export default function Home() {
         <title>Explorar / Twitter</title>
       </Head>
       <Header />
-      {
-        status !== "authenticated" && (
-          !isLoading && data !== undefined
-            ? data
-              .map((tweet) => tweet.isRetweet ? <Retweet key={tweet._id} {...tweet} /> : <Tweet key={tweet._id} {...tweet} />)
-            : [1, 2, 3, 4, 5, 6, 7].map((tweet) => <SkeletonTweet key={tweet} />)
-        )
-      }
+      {status !== "authenticated" &&
+        (!isLoading && data !== undefined
+          ? data
+              .filter((tweet) => tweet.isRetweet !== true)
+              .map((tweet) =>
+                tweet.isRetweet ? (
+                  <Retweet key={tweet._id} {...tweet} />
+                ) : (
+                  <Tweet key={tweet._id} {...tweet} />
+                )
+              )
+          : [1, 2, 3, 4, 5, 6, 7].map((tweet) => (
+              <SkeletonTweet key={tweet} />
+            )))}
     </>
   );
 }
@@ -42,9 +47,9 @@ const Header = () => {
   return (
     <div className="sticky top-0 z-10  bg-white/75 backdrop-blur-md dark:bg-black/70 dark:text-[#e7e9ea]">
       <div className="flex items-center justify-between px-4 py-5">
-          <div>
-            <h2 className="text-xl font-bold">Explorar</h2>
-          </div>
+        <div>
+          <h2 className="text-xl font-bold">Explorar</h2>
+        </div>
       </div>
     </div>
   );
