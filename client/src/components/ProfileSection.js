@@ -118,12 +118,12 @@ const ProfileSection = ({ session, profile }) => {
           <p className="font-bold text-lg">{profile?.user?.name ? profile?.user?.name : "elonmusk"}</p>
           {
             pathname.includes("with_replies")
-              ? <p className="text-sm text-gray-400">{profile?.user?.replies?.length ? profile?.user?.replies.length : 0} Respuestas</p>
+              ? <p className="text-sm text-gray-500 dark:text-gray-400">{profile?.user?.comments?.length ? profile?.user?.comments.length : 0} Respuestas</p>
               : pathname.includes("media")
-                ? <p className="text-sm text-gray-400">{profile?.user?.media?.length ? profile?.user?.media.length : 0} Fotos y videos</p>
+                ? <p className="text-sm text-gray-500 dark:text-gray-400">{profile?.user?.media?.length ? profile?.user?.media.length : 0} Fotos y videos</p>
                 : pathname.includes("likes")
-                  ? <p className="text-sm text-gray-400">{profile?.user?.likes?.length ? profile?.user?.likes.length : 0} Me gusta</p>
-                  : <p className="text-sm text-gray-400">{profile?.user?.tweets?.length ? profile?.user?.tweets.length : 0} Tweets</p>
+                  ? <p className="text-sm text-gray-500 dark:text-gray-400">{profile?.user?.likes?.length ? profile?.user?.likes.length : 0} Me gusta</p>
+                  : <p className="text-sm text-gray-500 dark:text-gray-400">{profile?.user?.tweets?.length ? profile?.user?.tweets.length : 0} Tweets</p>
           }
 
         </div>
@@ -131,7 +131,7 @@ const ProfileSection = ({ session, profile }) => {
 
       <Image
         onClick={() => setOpenImageBG(!openImageBG)}
-        className="h-[200px] w-full object-cover cursor-pointer"
+        className="max-h-[200px] h-full w-full object-cover cursor-pointer"
         src={
           profile?.user?.background ? profile?.user?.background : "/img/bg_pattern.png"
         }

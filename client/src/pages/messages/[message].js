@@ -140,7 +140,7 @@ const Message = () => {
           alt="Foto de perfil de Usuario"
         />
         <h2 className='text-xl font-bold'>{profile?.name}</h2>
-        <h3 className='text-gray-400 mb-4'>@{profile?.username}</h3>
+        <h3 className='text-gray-500 dark:text-gray-400 mb-4'>@{profile?.username}</h3>
 
         <p>{profile?.bio}</p>
         <p>Se unio el {profile?.createdAt ? formatDate(profile?.createdAt) : "2 de marzo"} - {profile?.followers?.length} Seguidores</p>

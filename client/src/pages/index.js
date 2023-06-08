@@ -1,6 +1,7 @@
 
 import SkeletonTweet from "@/components/SkeletonTweet";
 import Tweet from "@/components/Tweet";
+import Retweet from "@/components/Retweet";
 import { useGetAllTweetsQuery } from "@/redux/services/tweetsApi";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -29,8 +30,7 @@ export default function Home() {
         status !== "authenticated" && (
           !isLoading && data !== undefined
             ? data
-              .filter((tweet) => tweet.author && !tweet.isRetweet)
-              .map((tweet) => <Tweet key={tweet._id} {...tweet} />)
+              .map((tweet) => tweet.isRetweet ? <Retweet key={tweet._id} {...tweet} /> : <Tweet key={tweet._id} {...tweet} />)
             : [1, 2, 3, 4, 5, 6, 7].map((tweet) => <SkeletonTweet key={tweet} />)
         )
       }

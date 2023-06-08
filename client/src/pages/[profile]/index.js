@@ -3,12 +3,16 @@ import { useSession, signIn } from "next-auth/react"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { useGetUserByIdQuery } from "@/redux/services/usersApi"
+import QuienSeguir from "@/components/layoutComponents/QuienSeguir"
+import { useGetTweetsByUserIdQuery } from "@/redux/services/tweetsApi"
+import Tweet from "@/components/Tweet"
 
 export default function Profile () {
   const { data: session, loading, status } = useSession()
   let profile = {}
   const { query } = useRouter()
   const { data } = useGetUserByIdQuery({ userId: query?.profile, token: session?.token })
+  const { data: mineTweets } = useGetTweetsByUserIdQuery({ userId: query?.profile === session?.user?.username ? session?.user?._id : data?._id, token: session?.token })
 
   if (loading) {
     <p className="dark:text-white">Cargando</p>
@@ -33,7 +37,15 @@ export default function Profile () {
     <ProfileSection session={session} profile={profile} />
 
     <section className="w-[95%] mx-auto my-4 dark:text-white">
-      <h2 className="text-xl font-bold">A quién seguir</h2>
+      {
+        mineTweets?.length
+          ? mineTweets.map(tweet => (
+          <Tweet key={tweet._id} {...tweet} />
+          ))
+          : null
+      }
+
+      <QuienSeguir expand={true} />
     </section>
 
     <div>

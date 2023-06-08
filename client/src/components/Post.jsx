@@ -9,6 +9,8 @@ import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { useCreateTweetMutation } from "@/redux/services/tweetsApi";
 import { useSession } from "next-auth/react";
+import Pie from "./Circle";
+// import { useRouter } from "next/router";
 import { obtenerHashtags } from "../../utils/functions";
 import ModalWarning from "./ModalWarning";
 
@@ -23,10 +25,10 @@ const Post = () => {
 
   const handleTweetChange = (event) => {
     const content = event.target.value
-    if (content.length <= 98) {
+    if (content.length <= 300) {
       setTweetText(content);
     } else {
-      setTweetText(content.slice(0, 98));
+      setTweetText(content.slice(0, 300));
     }
   };
 
@@ -41,7 +43,7 @@ const Post = () => {
       body.append("content", tweetText);
       body.append("hashtags", obtenerHashtags(tweetText));
       await createTweet({ body, token: session.token }).then(async res => {
-        if (!res.data.message) {
+        if (!res.data?.message) {
           setTweetText("");
           setFiles([]);
           setUbicacion("");
@@ -182,10 +184,13 @@ const Post = () => {
                 </div>
                 <Ubicacion setUbicacion={setUbicacion} />
               </div>
+
+              <span className="px-1 ml-auto my-auto"><Pie percentage={tweetText.length} colour={"#1a8cd8"} size={48} /></span>
+
               <button
                 className="duration-400 rounded-full max-sm:text-xs bg-[#1d9bf0] max-sm:px-3 px-4 font-semibold text-white transition-opacity hover:bg-[#1a8cd8] disabled:cursor-not-allowed disabled:bg-[#1a8cd8] disabled:opacity-70"
                 type="submit"
-                disabled={!tweetText.length && !files.length}
+                disabled={(!tweetText.length && !files.length) || tweetText.length > 280}
                 onClick={handleTweetSubmit}
               >
                 Twittear

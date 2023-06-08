@@ -192,7 +192,7 @@ function Header() {
           </button>
         </div>
       </div>
-      <div className="noscrollbar flex h-full min-w-max flex-col items-center gap-5 overflow-y-auto border-r-black/5 px-2 dark:border-r-white/20 max-md:w-full md:fixed md:border-r xl:w-[300px] xl:px-4">
+      <div className="noscrollbar flex h-full min-w-max flex-col items-center gap-5 overflow-y-auto border-r-black/5 px-1 lg:px-2 dark:border-r-white/20 max-md:w-full md:fixed md:border-r xl:w-[300px] xl:px-4">
         <div className="fixed z-[9] top-0 flex w-full items-center justify-between border-b border-b-black/10 bg-white px-4 py-3 dark:border-b-white/20 dark:bg-black md:hidden">
           {
             status === "unauthenticated"
@@ -231,27 +231,32 @@ function Header() {
 
         <div className="hidden w-full flex-col gap-1.5 py-1 max-xl:items-center md:flex">
           <Link
-            className="w-fit rounded-full p-3 transition duration-300 hover:bg-black/10 hover:dark:bg-white/10"
+            className="w-fit rounded-full py-2 lg:p-3 transition duration-300 hover:bg-black/10 hover:dark:bg-white/10"
             href="/home"
           >
             <TwitterIcon size={28} />
           </Link>
 
-          <Link
-            href="/home"
-            className={
-              "flex w-fit items-center gap-4 rounded-3xl p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4 " +
-              (pathname === "/" ? "font-bold" : "")
-            }
-          >
-            <HomeIcon size={28} active={pathname === "/home"} />{" "}
-            <p className="dark:text-white max-xl:hidden">Inicio</p>
-          </Link>
+          {
+            !session
+              ? null : (
+              <Link
+                href="/home"
+                className={
+                  "flex w-fit items-center gap-4 rounded-3xl py-2 lg:p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 xl:pr-4 " +
+                  (pathname === "/" ? "font-bold" : "")
+                }
+              >
+                <HomeIcon size={28} active={pathname === "/home"} />{" "}
+                <p className="dark:text-white max-xl:hidden">Inicio</p>
+              </Link>
+              )
+          }
 
           <Link
             href="/explore"
             className={
-              "flex w-fit items-center gap-4 rounded-3xl p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4 " +
+              "flex w-fit items-center gap-4 rounded-3xl py-2 lg:p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 xl:pr-4 " +
               (pathname === "/explore" ? "font-bold" : "")
             }
           >
@@ -259,64 +264,55 @@ function Header() {
             <p className="dark:text-white max-xl:hidden">Explorar</p>
           </Link>
 
-          <Link
-            href="/notifications"
-            className={
-              "flex w-fit items-center gap-4 rounded-3xl p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4 " +
-              (pathname === "/notifications" ? "font-bold" : "")
-            }
-          >
-            <NotificationIcon
-              size={28}
-              active={pathname === "/notifications"}
-            />{" "}
-            <p className="dark:text-white max-xl:hidden">Notificaciones</p>
-          </Link>
+          {
+            !session
+              ? <Darkmode sidebar={true} /> : null
+          }
 
-          <Link
-            href="/messages"
-            className={
-              "flex w-fit items-center gap-4 rounded-3xl p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4 " +
-              (pathname.includes("messages") ? "font-bold" : "")
-            }
-          >
-            <MessagesIcon size={28} active={pathname.includes("messages")} />{" "}
-            <p className="dark:text-white max-xl:hidden">Mensajes</p>
-          </Link>
-
-          <Link
-            href="/lists"
-            className={
-              "flex w-fit items-center gap-4 rounded-3xl p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4 " +
-              (pathname === "/lists" ? "font-bold" : "")
-            }
-          >
-            <ListIcon size={28} active={pathname === "/lists"} />{" "}
-            <p className="dark:text-white max-xl:hidden">Listas</p>
-          </Link>
-
-          <Link
-            href="/bookmarks"
-            className={
-              "flex w-fit items-center gap-4 rounded-3xl p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4 " +
-              (pathname === "/bookmarks" ? "font-bold" : "")
-            }
-          >
-            <BookmarkIcon size={28} active={pathname === "/bookmarks"} />{" "}
-            <p className="dark:text-white max-xl:hidden">Guardados</p>
-          </Link>
-
-          <Link
-            href={"/" + session?.user?.username}
-            className={
-              "flex w-fit items-center gap-4 rounded-3xl p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 lg:pr-4 " +
-              (query.profile === session?.user?.username ? "font-bold" : "")
-            }
-          >
-            <ProfileIcon size={28} active={query.profile === session?.user?.username} />{" "}
-            <p className="dark:text-white max-xl:hidden">Perfil</p>
-          </Link>
-
+          {
+            !session
+              ? null : (
+                <>
+                <Link
+                  href="/notifications"
+                  className={"flex w-fit items-center gap-4 rounded-3xl py-2 lg:p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 xl:pr-4 " +
+                    (pathname === "/notifications" ? "font-bold" : "")}
+                >
+                  <NotificationIcon
+                    size={28}
+                    active={pathname === "/notifications"} />{" "}
+                  <p className="dark:text-white max-xl:hidden">Notificaciones</p>
+                </Link><Link
+                  href="/messages"
+                  className={"flex w-fit items-center gap-4 rounded-3xl py-2 lg:p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 xl:pr-4 " +
+                    (pathname.includes("messages") ? "font-bold" : "")}
+                >
+                    <MessagesIcon size={28} active={pathname.includes("messages")} />{" "}
+                    <p className="dark:text-white max-xl:hidden">Mensajes</p>
+                  </Link><Link
+                    href="/lists"
+                    className={"flex w-fit items-center gap-4 rounded-3xl py-2 lg:p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 xl:pr-4 " +
+                      (pathname === "/lists" ? "font-bold" : "")}
+                  >
+                    <ListIcon size={28} active={pathname === "/lists"} />{" "}
+                    <p className="dark:text-white max-xl:hidden">Listas</p>
+                  </Link><Link
+                    href="/bookmarks"
+                    className={"flex w-fit items-center gap-4 rounded-3xl py-2 lg:p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 xl:pr-4 " +
+                      (pathname === "/bookmarks" ? "font-bold" : "")}
+                  >
+                    <BookmarkIcon size={28} active={pathname === "/bookmarks"} />{" "}
+                    <p className="dark:text-white max-xl:hidden">Guardados</p>
+                  </Link><Link
+                    href={"/" + session?.user?.username}
+                    className={"flex w-fit items-center gap-4 rounded-3xl py-2 lg:p-3 text-xl transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 xl:pr-4 " +
+                      (query.profile === session?.user?.username ? "font-bold" : "")}
+                  >
+                    <ProfileIcon size={28} active={query.profile === session?.user?.username} />{" "}
+                    <p className="dark:text-white max-xl:hidden">Perfil</p>
+                  </Link>
+                </>)
+          }
           {session ? (
             <Popover className="relative mt-auto w-full max-md:hidden">
               <Transition
@@ -376,7 +372,7 @@ function Header() {
 
               <Popover.Button
                 ref={setOpenOptionPopper}
-                className="flex w-fit items-center gap-4 rounded-3xl p-3 text-xl outline-none transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 max-xl:m-auto lg:pr-4"
+                className="flex w-fit items-center gap-4 rounded-3xl py-2 lg:p-3 text-xl outline-none transition duration-300 hover:bg-black/10 hover:dark:bg-white/10 max-xl:m-auto xl:pr-4"
               >
                 <MoreIcon size={28} />
                 <p className="dark:text-white max-xl:hidden">Más opciones</p>
@@ -387,7 +383,7 @@ function Header() {
           {session && (
             <button
               onClick={() => document.querySelector("#tweet")?.focus()}
-              className="mt-5 w-fit rounded-full bg-[#1d9bf0] p-3.5 transition duration-300 hover:bg-[#1a8cd8] xl:w-[85%] xl:p-3"
+              className="mt-5 w-fit rounded-full bg-[#1d9bf0] p-2 lg:p-3.5 transition duration-300 hover:bg-[#1a8cd8] xl:w-[85%] xl:p-3"
             >
               <div className="xl:hidden">
                 <CreateTweetIcon size={24} />
@@ -534,7 +530,7 @@ function Footer() {
 
       <footer className={"w-[350px] max-lg:hidden " + (pathname.includes("messages") || pathname.includes("settings") ? "md:hidden" : "")}>
         <div className="noscrollbar fixed flex max-w-[350px] flex-col gap-5 overflow-y-scroll border-l-black/5 px-4 dark:border-l-white/20 md:h-full md:border-l">
-          <div className="sticky top-0 w-full bg-white py-1 dark:bg-black">
+          <div className={`${pathname.includes("explore") ? "hidden" : ""} sticky top-0 w-full bg-white py-1 dark:bg-black`}>
             <div className="group flex w-full items-center gap-3 overflow-hidden rounded-3xl border border-black/20 bg-slate-100/20 px-3 transition duration-200 focus-within:border-indigo-500 dark:border-white/20 dark:bg-slate-500/20 dark:focus-within:border-indigo-500">
               <button>
                 <SearchIcon size={24} opacity={true} />
@@ -551,7 +547,10 @@ function Footer() {
               <Login />
             ) : (
               <div className="col-1 flex flex-col gap-2">
-                <QueEstaPasando /> <QuienSeguir />
+                {
+                  pathname.includes("explore") ? null : <QueEstaPasando />
+                }
+                 <QuienSeguir />
               </div>
             )}
           </div>
@@ -755,8 +754,8 @@ export default function Layout({ children }) {
                         <p className="font-bold dark:text-white truncate">
                           {e.name}
                         </p>
-                        <small className="text-gray-400 truncate">@{e.username}</small>
-                        <small className="text-gray-400 truncate">{formatDate(e.time, true)}</small>
+                        <small className="text-gray-500 dark:text-gray-400 truncate">@{e.username}</small>
+                        <small className="text-gray-500 dark:text-gray-400 truncate">{formatDate(e.time, true)}</small>
                       </div>
                       <Popover className="-mt-1 ml-auto">
                         <Transition
@@ -791,7 +790,7 @@ export default function Layout({ children }) {
                         </Popover.Button>
                       </Popover>
                     </div>
-                    <p className="text-gray-400 truncate">{e.lastmessage}</p>
+                    <p className="text-gray-500 dark:text-gray-400 truncate">{e.lastmessage}</p>
                   </div>
 
                 </Link>

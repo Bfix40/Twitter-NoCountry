@@ -11,7 +11,7 @@ import Loading from "../Loading";
 const { default: Image } = require("next/image");
 const { default: Link } = require("next/link");
 
-function QuienSeguir() {
+function QuienSeguir({ expand }) {
   const { data: session } = useSession();
   const loggedInUserId = session?.user?._id;
   const userActual = useGetMyProfileQuery(session?.token);
@@ -78,7 +78,7 @@ function QuienSeguir() {
   if (userActual.isFetching) {
     return (
       <div>
-        <div className="flex h-[330px] max-w-[330px] items-center justify-center rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800 ">
+        <div className={(expand ? "w-full" : "max-w-[330px]") + " flex h-[330px] items-center justify-center rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800"}>
           <Loading />
         </div>
       </div>
@@ -87,7 +87,7 @@ function QuienSeguir() {
 
   return (
     <>
-      <div className="h-[330px] max-w-[330px] rounded-xl dark:bg-[#16181C]">
+      <div className={(expand ? "w-full" : "max-w-[330px] dark:bg-[#16181C]") + " h-[330px] rounded-xl"}>
         <h2 className="ml-3 mt-2 text-[23px] font-semibold dark:text-white">
           A quién seguir
         </h2>
