@@ -1,16 +1,13 @@
 import Post from "@/components/Post";
 import Tweet from "@/components/Tweet";
 import Modal from "@/components/Modal";
-import { AppContext } from "@/context/AppContext";
+import { AppContext } from '@/context/AppContext'
 import React, { useState, useContext } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import {
-  useGetAllTweetsQuery,
-  useGetTopHashtagsQuery,
-} from "@/redux/services/tweetsApi";
+import { useGetAllTweetsQuery, useGetTopHashtagsQuery } from "@/redux/services/tweetsApi";
 
 import SkeletonTweet from "@/components/SkeletonTweet";
 import Retweet from "@/components/Retweet";
@@ -22,11 +19,10 @@ function Home() {
   // const { data: top } = useGetTopHashtagsQuery(undefined, {
   //   refetchOnReconnect: true,
   // });
-  console.log(data);
   const [isSelected, setIsSelected] = useState("para-ti");
   const { status } = useSession();
   const router = useRouter();
-  const [appContext] = useContext(AppContext);
+  const [appContext] = useContext(AppContext)
 
   if (status === "unauthenticated") {
     router.push("/");
@@ -43,16 +39,9 @@ function Home() {
       <Post />
       {!isLoading && data !== undefined
         ? data
-            .filter((tweet) => tweet.isRetweet !== true)
-            .map((tweet) =>
-              tweet.isRetweet ? (
-                <Retweet key={tweet._id} {...tweet} />
-              ) : (
-                <Tweet key={tweet._id} {...tweet} />
-              )
-            )
+          .map((tweet) => tweet.isRetweet ? <Retweet key={tweet._id} {...tweet} /> : <Tweet key={tweet._id} {...tweet} />)
         : [1, 2, 3, 4, 5, 6, 7].map((tweet) => <SkeletonTweet key={tweet} />)}
-      {appContext.active ? <Modal /> : null}
+        {appContext.active ? <Modal /> : null}
     </>
   );
 }
