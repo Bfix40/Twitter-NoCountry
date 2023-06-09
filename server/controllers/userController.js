@@ -3,6 +3,7 @@ import Comment from "../models/Comment.js";
 import Session from "../models/Session.js";
 import Tweet from "../models/Tweet.js";
 import User from "../models/User.js";
+import Retweet from '../models/Retweet.js';
 
 //ver perfil
 const getProfileById = async (req, res) => {
@@ -93,9 +94,10 @@ const deleteMyProfile = async (req, res) => {
   try {
     const { id } = req.user;
     const deletedProfile = await User.findByIdAndDelete(id)
-    const deletedTweets = await Tweet.findOneAndDelete({ author: id })
-    const deletedComments = await Comment.findOneAndDelete({ author: id })
-    const deletedSession = await Session.findOneAndDelete({ userId: id })
+    const deletedTweets = await Tweet.deleteMany({ author: id })
+    const deletedRetweets = await Retweet.deleteMany({ author: id })
+    const deletedComments = await Comment.deleteMany({ author: id })
+    const deletedSession = await Session.deleteMany({ userId: id })
     res.status(200).json("El perfil, los tweets y comentarios se han eliminado correctamente.")
   } catch (error) {
     console.error(error);

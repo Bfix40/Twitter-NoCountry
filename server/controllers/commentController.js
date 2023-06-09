@@ -8,6 +8,7 @@ const createComment = async (req, res) => {
     let newComment = new Comment({
       author: id,
       content: content,
+      tweetId: tweetId
     });
     const tweet = await Tweet.findById(tweetId);
     tweet.comments.push(newComment.id);
