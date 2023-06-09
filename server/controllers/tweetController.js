@@ -24,7 +24,7 @@ const createTweet = async (req, res) => {
 
     //verificar palabras y solicitar confirmacion
     if (foundedForbiddenWords.length > 0 && !confirmation) {
-      const confirmationMessage = `¿Estás seguro de mandar el tweet? Tienes las siguientes palabras malsonantes: ${foundedForbiddenWords.join(', ')}`;
+      const confirnmationMessage = `¿Estás seguro de mandar el tweet? Tienes las siguientes palabras malsonantes: ${foundedForbiddenWords.join(', ')}`;
 
       //solicitar confirmación
       return res.status(200).json({ message: 'Confirmation required', confirmationMessage, forbiddenWords: foundedForbiddenWords });
