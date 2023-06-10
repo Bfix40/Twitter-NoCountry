@@ -40,7 +40,7 @@ En el lado del servidor, se utiliza Node.js junto con Express para la creación 
 
 ## Link deployment
 
- - [Link]()
+ - [Link](https://twitter-nocountry-production.up.railway.app/home)
 
 
 
